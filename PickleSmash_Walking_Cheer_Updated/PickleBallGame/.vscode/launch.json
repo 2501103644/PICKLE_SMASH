@@ -3,9 +3,9 @@
   "configurations": [
     {
       "type": "java",
-      "name": "Run PickleBallHomeScreen",
+      "name": "Run Pickle Smash",
       "request": "launch",
-      "mainClass": "PickleBallHomeScreen",
+      "mainClass": "Main",
       "cwd": "${workspaceFolder}",
       "console": "internalConsole"
     }

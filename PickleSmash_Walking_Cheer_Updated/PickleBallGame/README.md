@@ -17,6 +17,7 @@ This is the current Home Screen development build. It keeps the menu visible whi
 ## Project layout
 
 - `src/PickleBallHomeScreen.java` — main Swing window, live demo loop, menu states, player movement, walk/swing animation states, ball physics, and moving clouds.
+- `src/Main.java` — simple application entry point that opens the home screen.
 - `src/AssetLoader.java` — image loading, sprite sheet slicing, transparency processing, and jersey tinting.
 - `assets/court_background.png` — city pickleball court background.
 - `assets/spritesheet.png` — original idle, ready, swing, and ball frames.
@@ -36,7 +37,7 @@ This is the current Home Screen development build. It keeps the menu visible whi
    ```
 5. Run:
    ```bash
-   java -cp bin PickleBallHomeScreen
+   java -cp bin Main
    ```
 
 ## Controls
