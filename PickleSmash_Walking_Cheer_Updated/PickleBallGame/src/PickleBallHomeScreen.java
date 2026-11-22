@@ -52,42 +52,55 @@ public class PickleBallHomeScreen extends JFrame {
     // 1. ENCAPSULATED RETRO PALETTE, STATES & AVATAR PRESETS
     // =========================================================================
     static final class Palette {
-        static final Color SKY_TOP        = new Color(24, 48, 89);
-        static final Color SKY_MID        = new Color(41, 84, 145);
-        static final Color SKY_HORIZON    = new Color(86, 152, 204);
-        static final Color COURT_OUTER    = new Color(36, 102, 74);
-        static final Color COURT_INNER    = new Color(56, 142, 98);
-        static final Color COURT_LINE     = new Color(241, 245, 249);
-        static final Color COURT_SHADOW   = new Color(18, 56, 40, 165);
-        static final Color NET_DARK       = new Color(24, 34, 52);
+        static final Color SKY_TOP = new Color(24, 48, 89);
+        static final Color SKY_MID = new Color(41, 84, 145);
+        static final Color SKY_HORIZON = new Color(86, 152, 204);
+        static final Color COURT_OUTER = new Color(36, 102, 74);
+        static final Color COURT_INNER = new Color(56, 142, 98);
+        static final Color COURT_LINE = new Color(241, 245, 249);
+        static final Color COURT_SHADOW = new Color(18, 56, 40, 165);
+        static final Color NET_DARK = new Color(24, 34, 52);
 
         // Beveled 16-bit button colors
-        static final Color BTN_OUTLINE    = new Color(15, 23, 42);
-        static final Color BTN_ACTIVE_BG  = new Color(250, 204, 21);
-        static final Color BTN_ACTIVE_HI  = new Color(254, 249, 195);
-        static final Color BTN_ACTIVE_SH  = new Color(202, 138, 4);
-        static final Color BTN_IDLE_BG    = new Color(22, 33, 56);
-        static final Color BTN_IDLE_HI    = new Color(71, 85, 105);
-        static final Color BTN_IDLE_SH    = new Color(12, 19, 34);
-        static final Color GOLD_TRIM      = new Color(234, 179, 8);
+        static final Color BTN_OUTLINE = new Color(15, 23, 42);
+        static final Color BTN_ACTIVE_BG = new Color(250, 204, 21);
+        static final Color BTN_ACTIVE_HI = new Color(254, 249, 195);
+        static final Color BTN_ACTIVE_SH = new Color(202, 138, 4);
+        static final Color BTN_IDLE_BG = new Color(22, 33, 56);
+        static final Color BTN_IDLE_HI = new Color(71, 85, 105);
+        static final Color BTN_IDLE_SH = new Color(12, 19, 34);
+        static final Color GOLD_TRIM = new Color(234, 179, 8);
 
-        static final Color BALL_YELLOW    = new Color(250, 204, 21);
-        static final Color BALL_LIGHT     = new Color(254, 240, 138);
-        static final Color BALL_SHADOW    = new Color(202, 138, 4);
-        static final Color BALL_HOLE      = new Color(113, 63, 18);
+        static final Color BALL_YELLOW = new Color(250, 204, 21);
+        static final Color BALL_LIGHT = new Color(254, 240, 138);
+        static final Color BALL_SHADOW = new Color(202, 138, 4);
+        static final Color BALL_HOLE = new Color(113, 63, 18);
 
-        static final Color MODAL_BG       = new Color(15, 23, 42, 240);
-        static final Color TEXT_WHITE     = new Color(248, 250, 252);
-        static final Color TEXT_MUTED     = new Color(148, 163, 184);
-        static final Color RIVAL_CYAN     = new Color(14, 165, 233);
+        static final Color MODAL_BG = new Color(15, 23, 42, 240);
+        static final Color TEXT_WHITE = new Color(248, 250, 252);
+        static final Color TEXT_MUTED = new Color(148, 163, 184);
+        static final Color RIVAL_CYAN = new Color(14, 165, 233);
     }
 
     enum GameState {
+        INTRO,
+        GENDER,
         HOME,
         PLAYING,
         MAP,
         AVATAR,
         CREDITS
+    }
+
+    enum Gender {
+        MALE("MALE"),
+        FEMALE("FEMALE");
+
+        final String label;
+
+        Gender(String label) {
+            this.label = label;
+        }
     }
 
     enum MenuAction {
@@ -97,7 +110,10 @@ public class PickleBallHomeScreen extends JFrame {
         EXIT("EXIT");
 
         final String label;
-        MenuAction(String label) { this.label = label; }
+
+        MenuAction(String label) {
+            this.label = label;
+        }
     }
 
     enum AvatarPreset {
@@ -123,56 +139,57 @@ public class PickleBallHomeScreen extends JFrame {
         private static final Map<Character, int[]> GLYPHS = new HashMap<>();
 
         static {
-            GLYPHS.put('A', new int[]{0b01110, 0b10001, 0b10001, 0b11111, 0b10001, 0b10001, 0b10001});
-            GLYPHS.put('B', new int[]{0b11110, 0b10001, 0b10001, 0b11110, 0b10001, 0b10001, 0b11110});
-            GLYPHS.put('C', new int[]{0b01111, 0b10000, 0b10000, 0b10000, 0b10000, 0b10000, 0b01111});
-            GLYPHS.put('D', new int[]{0b11110, 0b10001, 0b10001, 0b10001, 0b10001, 0b10001, 0b11110});
-            GLYPHS.put('E', new int[]{0b11111, 0b10000, 0b10000, 0b11110, 0b10000, 0b10000, 0b11111});
-            GLYPHS.put('F', new int[]{0b11111, 0b10000, 0b10000, 0b11110, 0b10000, 0b10000, 0b10000});
-            GLYPHS.put('G', new int[]{0b01111, 0b10000, 0b10000, 0b10111, 0b10001, 0b10001, 0b01111});
-            GLYPHS.put('H', new int[]{0b10001, 0b10001, 0b10001, 0b11111, 0b10001, 0b10001, 0b10001});
-            GLYPHS.put('I', new int[]{0b11111, 0b00100, 0b00100, 0b00100, 0b00100, 0b00100, 0b11111});
-            GLYPHS.put('J', new int[]{0b00111, 0b00010, 0b00010, 0b00010, 0b10010, 0b10010, 0b01100});
-            GLYPHS.put('K', new int[]{0b10001, 0b10010, 0b10100, 0b11000, 0b10100, 0b10010, 0b10001});
-            GLYPHS.put('L', new int[]{0b10000, 0b10000, 0b10000, 0b10000, 0b10000, 0b10000, 0b11111});
-            GLYPHS.put('M', new int[]{0b10001, 0b11011, 0b10101, 0b10101, 0b10001, 0b10001, 0b10001});
-            GLYPHS.put('N', new int[]{0b10001, 0b11001, 0b10101, 0b10011, 0b10001, 0b10001, 0b10001});
-            GLYPHS.put('O', new int[]{0b01110, 0b10001, 0b10001, 0b10001, 0b10001, 0b10001, 0b01110});
-            GLYPHS.put('P', new int[]{0b11110, 0b10001, 0b10001, 0b11110, 0b10000, 0b10000, 0b10000});
-            GLYPHS.put('Q', new int[]{0b01110, 0b10001, 0b10001, 0b10001, 0b10101, 0b10010, 0b01101});
-            GLYPHS.put('R', new int[]{0b11110, 0b10001, 0b10001, 0b11110, 0b10100, 0b10010, 0b10001});
-            GLYPHS.put('S', new int[]{0b01111, 0b10000, 0b10000, 0b01110, 0b00001, 0b00001, 0b11110});
-            GLYPHS.put('T', new int[]{0b11111, 0b00100, 0b00100, 0b00100, 0b00100, 0b00100, 0b00100});
-            GLYPHS.put('U', new int[]{0b10001, 0b10001, 0b10001, 0b10001, 0b10001, 0b10001, 0b01110});
-            GLYPHS.put('V', new int[]{0b10001, 0b10001, 0b10001, 0b10001, 0b10001, 0b01010, 0b00100});
-            GLYPHS.put('W', new int[]{0b10001, 0b10001, 0b10001, 0b10101, 0b10101, 0b11011, 0b10001});
-            GLYPHS.put('X', new int[]{0b10001, 0b10001, 0b01010, 0b00100, 0b01010, 0b10001, 0b10001});
-            GLYPHS.put('Y', new int[]{0b10001, 0b10001, 0b01010, 0b00100, 0b00100, 0b00100, 0b00100});
-            GLYPHS.put('Z', new int[]{0b11111, 0b00001, 0b00010, 0b00100, 0b01000, 0b10000, 0b11111});
+            GLYPHS.put('A', new int[] { 0b01110, 0b10001, 0b10001, 0b11111, 0b10001, 0b10001, 0b10001 });
+            GLYPHS.put('B', new int[] { 0b11110, 0b10001, 0b10001, 0b11110, 0b10001, 0b10001, 0b11110 });
+            GLYPHS.put('C', new int[] { 0b01111, 0b10000, 0b10000, 0b10000, 0b10000, 0b10000, 0b01111 });
+            GLYPHS.put('D', new int[] { 0b11110, 0b10001, 0b10001, 0b10001, 0b10001, 0b10001, 0b11110 });
+            GLYPHS.put('E', new int[] { 0b11111, 0b10000, 0b10000, 0b11110, 0b10000, 0b10000, 0b11111 });
+            GLYPHS.put('F', new int[] { 0b11111, 0b10000, 0b10000, 0b11110, 0b10000, 0b10000, 0b10000 });
+            GLYPHS.put('G', new int[] { 0b01111, 0b10000, 0b10000, 0b10111, 0b10001, 0b10001, 0b01111 });
+            GLYPHS.put('H', new int[] { 0b10001, 0b10001, 0b10001, 0b11111, 0b10001, 0b10001, 0b10001 });
+            GLYPHS.put('I', new int[] { 0b11111, 0b00100, 0b00100, 0b00100, 0b00100, 0b00100, 0b11111 });
+            GLYPHS.put('J', new int[] { 0b00111, 0b00010, 0b00010, 0b00010, 0b10010, 0b10010, 0b01100 });
+            GLYPHS.put('K', new int[] { 0b10001, 0b10010, 0b10100, 0b11000, 0b10100, 0b10010, 0b10001 });
+            GLYPHS.put('L', new int[] { 0b10000, 0b10000, 0b10000, 0b10000, 0b10000, 0b10000, 0b11111 });
+            GLYPHS.put('M', new int[] { 0b10001, 0b11011, 0b10101, 0b10101, 0b10001, 0b10001, 0b10001 });
+            GLYPHS.put('N', new int[] { 0b10001, 0b11001, 0b10101, 0b10011, 0b10001, 0b10001, 0b10001 });
+            GLYPHS.put('O', new int[] { 0b01110, 0b10001, 0b10001, 0b10001, 0b10001, 0b10001, 0b01110 });
+            GLYPHS.put('P', new int[] { 0b11110, 0b10001, 0b10001, 0b11110, 0b10000, 0b10000, 0b10000 });
+            GLYPHS.put('Q', new int[] { 0b01110, 0b10001, 0b10001, 0b10001, 0b10101, 0b10010, 0b01101 });
+            GLYPHS.put('R', new int[] { 0b11110, 0b10001, 0b10001, 0b11110, 0b10100, 0b10010, 0b10001 });
+            GLYPHS.put('S', new int[] { 0b01111, 0b10000, 0b10000, 0b01110, 0b00001, 0b00001, 0b11110 });
+            GLYPHS.put('T', new int[] { 0b11111, 0b00100, 0b00100, 0b00100, 0b00100, 0b00100, 0b00100 });
+            GLYPHS.put('U', new int[] { 0b10001, 0b10001, 0b10001, 0b10001, 0b10001, 0b10001, 0b01110 });
+            GLYPHS.put('V', new int[] { 0b10001, 0b10001, 0b10001, 0b10001, 0b10001, 0b01010, 0b00100 });
+            GLYPHS.put('W', new int[] { 0b10001, 0b10001, 0b10001, 0b10101, 0b10101, 0b11011, 0b10001 });
+            GLYPHS.put('X', new int[] { 0b10001, 0b10001, 0b01010, 0b00100, 0b01010, 0b10001, 0b10001 });
+            GLYPHS.put('Y', new int[] { 0b10001, 0b10001, 0b01010, 0b00100, 0b00100, 0b00100, 0b00100 });
+            GLYPHS.put('Z', new int[] { 0b11111, 0b00001, 0b00010, 0b00100, 0b01000, 0b10000, 0b11111 });
 
-            GLYPHS.put('0', new int[]{0b01110, 0b10011, 0b10101, 0b10101, 0b11001, 0b10001, 0b01110});
-            GLYPHS.put('1', new int[]{0b00100, 0b01100, 0b00100, 0b00100, 0b00100, 0b00100, 0b01110});
-            GLYPHS.put('2', new int[]{0b01110, 0b10001, 0b00001, 0b00110, 0b01000, 0b10000, 0b11111});
-            GLYPHS.put('3', new int[]{0b11110, 0b00001, 0b00001, 0b01110, 0b00001, 0b00001, 0b11110});
-            GLYPHS.put('4', new int[]{0b00010, 0b00110, 0b01010, 0b10010, 0b11111, 0b00010, 0b00010});
-            GLYPHS.put('5', new int[]{0b11111, 0b10000, 0b11110, 0b00001, 0b00001, 0b10001, 0b01110});
-            GLYPHS.put('6', new int[]{0b01110, 0b10000, 0b10000, 0b11110, 0b10001, 0b10001, 0b01110});
-            GLYPHS.put('7', new int[]{0b11111, 0b00001, 0b00010, 0b00100, 0b01000, 0b01000, 0b01000});
-            GLYPHS.put('8', new int[]{0b01110, 0b10001, 0b10001, 0b01110, 0b10001, 0b10001, 0b01110});
-            GLYPHS.put('9', new int[]{0b01110, 0b10001, 0b10001, 0b01111, 0b00001, 0b00001, 0b01110});
+            GLYPHS.put('0', new int[] { 0b01110, 0b10011, 0b10101, 0b10101, 0b11001, 0b10001, 0b01110 });
+            GLYPHS.put('1', new int[] { 0b00100, 0b01100, 0b00100, 0b00100, 0b00100, 0b00100, 0b01110 });
+            GLYPHS.put('2', new int[] { 0b01110, 0b10001, 0b00001, 0b00110, 0b01000, 0b10000, 0b11111 });
+            GLYPHS.put('3', new int[] { 0b11110, 0b00001, 0b00001, 0b01110, 0b00001, 0b00001, 0b11110 });
+            GLYPHS.put('4', new int[] { 0b00010, 0b00110, 0b01010, 0b10010, 0b11111, 0b00010, 0b00010 });
+            GLYPHS.put('5', new int[] { 0b11111, 0b10000, 0b11110, 0b00001, 0b00001, 0b10001, 0b01110 });
+            GLYPHS.put('6', new int[] { 0b01110, 0b10000, 0b10000, 0b11110, 0b10001, 0b10001, 0b01110 });
+            GLYPHS.put('7', new int[] { 0b11111, 0b00001, 0b00010, 0b00100, 0b01000, 0b01000, 0b01000 });
+            GLYPHS.put('8', new int[] { 0b01110, 0b10001, 0b10001, 0b01110, 0b10001, 0b10001, 0b01110 });
+            GLYPHS.put('9', new int[] { 0b01110, 0b10001, 0b10001, 0b01111, 0b00001, 0b00001, 0b01110 });
 
-            GLYPHS.put('-', new int[]{0b00000, 0b00000, 0b00000, 0b01110, 0b00000, 0b00000, 0b00000});
-            GLYPHS.put(':', new int[]{0b00000, 0b00100, 0b00100, 0b00000, 0b00100, 0b00100, 0b00000});
-            GLYPHS.put('.', new int[]{0b00000, 0b00000, 0b00000, 0b00000, 0b00000, 0b00110, 0b00110});
-            GLYPHS.put('!', new int[]{0b00100, 0b00100, 0b00100, 0b00100, 0b00100, 0b00000, 0b00100});
-            GLYPHS.put('/', new int[]{0b00001, 0b00010, 0b00010, 0b00100, 0b01000, 0b01000, 0b10000});
-            GLYPHS.put('>', new int[]{0b10000, 0b01000, 0b00100, 0b00010, 0b00100, 0b01000, 0b10000});
-            GLYPHS.put('<', new int[]{0b00001, 0b00010, 0b00100, 0b01000, 0b00100, 0b00010, 0b00001});
-            GLYPHS.put(' ', new int[]{0, 0, 0, 0, 0, 0, 0});
+            GLYPHS.put('-', new int[] { 0b00000, 0b00000, 0b00000, 0b01110, 0b00000, 0b00000, 0b00000 });
+            GLYPHS.put(':', new int[] { 0b00000, 0b00100, 0b00100, 0b00000, 0b00100, 0b00100, 0b00000 });
+            GLYPHS.put('.', new int[] { 0b00000, 0b00000, 0b00000, 0b00000, 0b00000, 0b00110, 0b00110 });
+            GLYPHS.put('!', new int[] { 0b00100, 0b00100, 0b00100, 0b00100, 0b00100, 0b00000, 0b00100 });
+            GLYPHS.put('/', new int[] { 0b00001, 0b00010, 0b00010, 0b00100, 0b01000, 0b01000, 0b10000 });
+            GLYPHS.put('>', new int[] { 0b10000, 0b01000, 0b00100, 0b00010, 0b00100, 0b01000, 0b10000 });
+            GLYPHS.put('<', new int[] { 0b00001, 0b00010, 0b00100, 0b01000, 0b00100, 0b00010, 0b00001 });
+            GLYPHS.put(' ', new int[] { 0, 0, 0, 0, 0, 0, 0 });
         }
 
         public static int getWidth(String text, int scale, int spacing) {
-            if (text == null || text.isEmpty()) return 0;
+            if (text == null || text.isEmpty())
+                return 0;
             return text.length() * (5 * scale + spacing) - spacing;
         }
 
@@ -195,9 +212,8 @@ public class PickleBallHomeScreen extends JFrame {
         }
 
         public static void drawOutlined(
-            Graphics2D g, String text, int x, int y, int scale, int spacing,
-            Color fill, Color outline
-        ) {
+                Graphics2D g, String text, int x, int y, int scale, int spacing,
+                Color fill, Color outline) {
             draw(g, text, x - 1, y, scale, spacing, outline);
             draw(g, text, x + 1, y, scale, spacing, outline);
             draw(g, text, x, y - 1, scale, spacing, outline);
@@ -206,7 +222,8 @@ public class PickleBallHomeScreen extends JFrame {
             draw(g, text, x, y, scale, spacing, fill);
         }
 
-        public static void drawCentered(Graphics2D g, String text, int centerX, int y, int scale, int spacing, Color color) {
+        public static void drawCentered(Graphics2D g, String text, int centerX, int y, int scale, int spacing,
+                Color color) {
             int w = getWidth(text, scale, spacing);
             draw(g, text, centerX - (w / 2), y, scale, spacing, color);
         }
@@ -224,7 +241,10 @@ public class PickleBallHomeScreen extends JFrame {
             T data;
             Node<T> next;
             Node<T> prev;
-            Node(T data) { this.data = data; }
+
+            Node(T data) {
+                this.data = data;
+            }
         }
 
         private Node<T> head;
@@ -249,11 +269,13 @@ public class PickleBallHomeScreen extends JFrame {
         }
 
         public void moveNext() {
-            if (current != null) current = current.next;
+            if (current != null)
+                current = current.next;
         }
 
         public void movePrev() {
-            if (current != null) current = current.prev;
+            if (current != null)
+                current = current.prev;
         }
 
         public T getCurrent() {
@@ -261,7 +283,8 @@ public class PickleBallHomeScreen extends JFrame {
         }
 
         public void select(T item) {
-            if (head == null) return;
+            if (head == null)
+                return;
             Node<T> temp = head;
             for (int i = 0; i < size; i++) {
                 if (temp.data.equals(item)) {
@@ -274,7 +297,8 @@ public class PickleBallHomeScreen extends JFrame {
 
         public List<T> toList() {
             List<T> items = new ArrayList<>(size);
-            if (head == null) return items;
+            if (head == null)
+                return items;
             Node<T> temp = head;
             for (int i = 0; i < size; i++) {
                 items.add(temp.data);
@@ -285,7 +309,8 @@ public class PickleBallHomeScreen extends JFrame {
     }
 
     /**
-     * Cyclic Sprite Animator managing idle/shuffle frame loops and one-shot paddle swings.
+     * Cyclic Sprite Animator managing idle/shuffle frame loops and one-shot paddle
+     * swings.
      */
     /**
      * Idle is the default pose. Ready appears only while the ball approaches.
@@ -303,9 +328,8 @@ public class PickleBallHomeScreen extends JFrame {
         private boolean walking = false;
 
         public SpriteAnimator(
-            BufferedImage idleSprite, BufferedImage readySprite,
-            BufferedImage swingSprite, BufferedImage[] walkSprites
-        ) {
+                BufferedImage idleSprite, BufferedImage readySprite,
+                BufferedImage swingSprite, BufferedImage[] walkSprites) {
             this.idleSprite = idleSprite;
             this.readySprite = readySprite;
             this.swingSprite = swingSprite;
@@ -330,7 +354,8 @@ public class PickleBallHomeScreen extends JFrame {
         }
 
         public void update(double dt) {
-            if (swingTimer > 0) swingTimer = Math.max(0, swingTimer - dt);
+            if (swingTimer > 0)
+                swingTimer = Math.max(0, swingTimer - dt);
             if (walking && walkSprites != null && walkSprites.length > 0) {
                 walkFrameTimer += dt;
                 // Four-frame walk cycle: a complete footstep loop takes 0.48 s.
@@ -343,11 +368,14 @@ public class PickleBallHomeScreen extends JFrame {
 
         public BufferedImage getCurrentSprite() {
             // Action priority: confirmed hit > prepare > walk > idle.
-            if (swingTimer > 0 && swingSprite != null) return swingSprite;
-            if (ready && readySprite != null) return readySprite;
+            if (swingTimer > 0 && swingSprite != null)
+                return swingSprite;
+            if (ready && readySprite != null)
+                return readySprite;
             if (walking && walkSprites != null && walkSprites.length > 0) {
                 BufferedImage frame = walkSprites[walkFrameIndex];
-                if (frame != null) return frame;
+                if (frame != null)
+                    return frame;
             }
             return idleSprite;
         }
@@ -376,24 +404,26 @@ public class PickleBallHomeScreen extends JFrame {
         }
 
         public abstract void update(double dt);
+
         public abstract void render(Graphics2D g);
     }
 
     /**
-     * 2.5D Pickleball with court bounce physics (z-elevation + gravity), ground shadow,
+     * 2.5D Pickleball with court bounce physics (z-elevation + gravity), ground
+     * shadow,
      * and an ArrayDeque sliding-window arc trail.
      */
     static class RallyPickleball extends PixelEntity {
         private static final int[][] FALLBACK_BALL = {
-            {0,0,0,1,1,1,0,0,0},
-            {0,1,1,2,2,2,2,0,0},
-            {1,2,4,2,2,4,2,2,0},
-            {1,2,2,2,2,2,2,3,0},
-            {1,2,2,4,2,2,4,3,3},
-            {0,2,4,2,2,2,2,3,3},
-            {0,2,2,2,4,2,3,3,0},
-            {0,0,3,3,3,3,3,0,0},
-            {0,0,0,3,3,3,0,0,0}
+                { 0, 0, 0, 1, 1, 1, 0, 0, 0 },
+                { 0, 1, 1, 2, 2, 2, 2, 0, 0 },
+                { 1, 2, 4, 2, 2, 4, 2, 2, 0 },
+                { 1, 2, 2, 2, 2, 2, 2, 3, 0 },
+                { 1, 2, 2, 4, 2, 2, 4, 3, 3 },
+                { 0, 2, 4, 2, 2, 2, 2, 3, 3 },
+                { 0, 2, 2, 2, 4, 2, 3, 3, 0 },
+                { 0, 0, 3, 3, 3, 3, 3, 0, 0 },
+                { 0, 0, 0, 3, 3, 3, 0, 0, 0 }
         };
 
         private static final double GRAVITY = 155.0;
@@ -471,7 +501,8 @@ public class PickleBallHomeScreen extends JFrame {
         }
 
         private void aimVelocityAtTarget() {
-            if (targetPlayer == null) return;
+            if (targetPlayer == null)
+                return;
 
             double targetX = targetPlayer.getPaddleCenterX();
             double targetGroundY = targetPlayer.getPaddleCenterY() + z;
@@ -484,7 +515,8 @@ public class PickleBallHomeScreen extends JFrame {
         }
 
         private void steerTowardMovingTarget(double dt) {
-            if (targetPlayer == null) return;
+            if (targetPlayer == null)
+                return;
 
             double targetX = targetPlayer.getPaddleCenterX();
             // Convert the visible paddle height back to the ball's ground plane.
@@ -513,7 +545,8 @@ public class PickleBallHomeScreen extends JFrame {
             if (z <= 0) {
                 z = 0;
                 vz = Math.abs(vz) * RESTITUTION;
-                if (vz < 14.0) vz = 36.0;
+                if (vz < 14.0)
+                    vz = 36.0;
             }
 
             // The perspective court widens toward the near baseline.
@@ -540,10 +573,10 @@ public class PickleBallHomeScreen extends JFrame {
             if (trailTimer >= 0.022) {
                 trailTimer = 0;
                 trail.addFirst(new Point(
-                    (int) Math.round(x + 7),
-                    (int) Math.round(y - z + 8)
-                ));
-                if (trail.size() > MAX_TRAIL) trail.removeLast();
+                        (int) Math.round(x + 7),
+                        (int) Math.round(y - z + 8)));
+                if (trail.size() > MAX_TRAIL)
+                    trail.removeLast();
             }
         }
 
@@ -579,7 +612,8 @@ public class PickleBallHomeScreen extends JFrame {
                 for (int r = 0; r < FALLBACK_BALL.length; r++) {
                     for (int c = 0; c < FALLBACK_BALL[r].length; c++) {
                         int val = FALLBACK_BALL[r][c];
-                        if (val == 0) continue;
+                        if (val == 0)
+                            continue;
                         switch (val) {
                             case 1 -> g.setColor(Palette.BALL_LIGHT);
                             case 2 -> g.setColor(Palette.BALL_YELLOW);
@@ -594,7 +628,8 @@ public class PickleBallHomeScreen extends JFrame {
     }
 
     /**
-     * Animated Court Player driven by sliced PNG frames (with built-in pixel matrix fallback).
+     * Animated Court Player driven by sliced PNG frames (with built-in pixel matrix
+     * fallback).
      */
     static class CourtPlayer extends PixelEntity {
         private final boolean facingRight;
@@ -611,10 +646,9 @@ public class PickleBallHomeScreen extends JFrame {
         private double hitCooldown = 0;
 
         public CourtPlayer(
-            double x, double y, boolean facingRight, boolean flipSpriteHorizontally,
-            Color jerseyColor, BufferedImage idleFrame, BufferedImage readyFrame,
-            BufferedImage swingFrame, BufferedImage[] walkFrames, RallyPickleball ball
-        ) {
+                double x, double y, boolean facingRight, boolean flipSpriteHorizontally,
+                Color jerseyColor, BufferedImage idleFrame, BufferedImage readyFrame,
+                BufferedImage swingFrame, BufferedImage[] walkFrames, RallyPickleball ball) {
             super(x, y, 0, 0);
             this.homeX = x;
             this.facingRight = facingRight;
@@ -644,13 +678,16 @@ public class PickleBallHomeScreen extends JFrame {
             if (baseIdleFrame != null) {
                 BufferedImage idle = AssetLoader.tintRedJersey(baseIdleFrame, jerseyColor);
                 BufferedImage ready = baseReadyFrame != null
-                    ? AssetLoader.tintRedJersey(baseReadyFrame, jerseyColor) : null;
+                        ? AssetLoader.tintRedJersey(baseReadyFrame, jerseyColor)
+                        : null;
                 BufferedImage swing = baseSwingFrame != null
-                    ? AssetLoader.tintRedJersey(baseSwingFrame, jerseyColor) : null;
+                        ? AssetLoader.tintRedJersey(baseSwingFrame, jerseyColor)
+                        : null;
                 BufferedImage[] walk = new BufferedImage[baseWalkFrames.length];
                 for (int i = 0; i < baseWalkFrames.length; i++) {
                     walk[i] = baseWalkFrames[i] != null
-                        ? AssetLoader.tintRedJersey(baseWalkFrames[i], jerseyColor) : null;
+                            ? AssetLoader.tintRedJersey(baseWalkFrames[i], jerseyColor)
+                            : null;
                 }
                 animator = new SpriteAnimator(idle, ready, swing, walk);
             } else {
@@ -660,14 +697,16 @@ public class PickleBallHomeScreen extends JFrame {
 
         public void setJerseyColor(Color newColor) {
             jerseyColor = newColor;
-            if (baseIdleFrame != null) rebuildAnimator();
+            if (baseIdleFrame != null)
+                rebuildAnimator();
         }
 
         public void reset(double startX, double startY) {
             x = startX;
             y = startY;
             hitCooldown = 0;
-            if (animator != null) animator.reset();
+            if (animator != null)
+                animator.reset();
         }
 
         private double clamp(double value, double min, double max) {
@@ -676,13 +715,15 @@ public class PickleBallHomeScreen extends JFrame {
 
         private double moveToward(double current, double target, double maxStep) {
             double delta = target - current;
-            if (Math.abs(delta) <= maxStep) return target;
+            if (Math.abs(delta) <= maxStep)
+                return target;
             return current + Math.signum(delta) * maxStep;
         }
 
         @Override
         public void update(double dt) {
-            if (hitCooldown > 0) hitCooldown = Math.max(0, hitCooldown - dt);
+            if (hitCooldown > 0)
+                hitCooldown = Math.max(0, hitCooldown - dt);
 
             boolean ballComingTowardMe = facingRight ? ball.vx < 0 : ball.vx > 0;
             boolean ballAssignedToMe = ball.isTarget(this);
@@ -701,9 +742,9 @@ public class PickleBallHomeScreen extends JFrame {
                 // receiver's changing paddle location.
                 double interceptLead = 0.10;
                 desiredX = ball.getScreenCenterX()
-                    + ball.vx * interceptLead - paddleOffsetX;
+                        + ball.vx * interceptLead - paddleOffsetX;
                 desiredY = ball.getScreenCenterY()
-                    + ball.vy * interceptLead - 32.0;
+                        + ball.vy * interceptLead - 32.0;
             }
 
             desiredX = clamp(desiredX, minX, maxX);
@@ -723,34 +764,33 @@ public class PickleBallHomeScreen extends JFrame {
             double paddleX = x + paddleOffsetX;
             double paddleY = y + 32.0;
             double contactDistance = Math.hypot(
-                ball.getScreenCenterX() - paddleX,
-                ball.getScreenCenterY() - paddleY
-            );
+                    ball.getScreenCenterX() - paddleX,
+                    ball.getScreenCenterY() - paddleY);
 
             if (animator != null) {
                 // Ready is only a near-contact preparation pose. It is not a swing.
                 animator.setReady(
-                    ballAssignedToMe && ballComingTowardMe
-                    && contactDistance > 12.0 && contactDistance < 28.0
-                );
+                        ballAssignedToMe && ballComingTowardMe
+                                && contactDistance > 12.0 && contactDistance < 28.0);
             }
 
             // A swing is permitted only for the assigned receiver and only
             // inside the small paddle/ball collision radius.
             final double PADDLE_CONTACT_RADIUS = 12.0;
-            boolean isContact =
-                ballAssignedToMe
-                && ballComingTowardMe
-                && hitCooldown <= 0
-                && contactDistance <= PADDLE_CONTACT_RADIUS;
+            boolean isContact = ballAssignedToMe
+                    && ballComingTowardMe
+                    && hitCooldown <= 0
+                    && contactDistance <= PADDLE_CONTACT_RADIUS;
 
             if (isContact && opponent != null
                     && ball.hitBy(this, opponent, 138.0)) {
-                if (animator != null) animator.triggerSwing(0.18);
+                if (animator != null)
+                    animator.triggerSwing(0.18);
                 hitCooldown = 0.24;
             }
 
-            if (animator != null) animator.update(dt);
+            if (animator != null)
+                animator.update(dt);
         }
 
         @Override
@@ -761,8 +801,7 @@ public class PickleBallHomeScreen extends JFrame {
             int spriteW = 22;
             if (sprite != null && sprite.getHeight() > 0) {
                 spriteW = Math.max(10, (int) Math.round(
-                    spriteH * (double) sprite.getWidth() / sprite.getHeight()
-                ));
+                        spriteH * (double) sprite.getWidth() / sprite.getHeight()));
             }
 
             int centreX = (int) Math.round(x) + 12;
@@ -803,7 +842,11 @@ public class PickleBallHomeScreen extends JFrame {
         private CourtPlayer rightPlayer;
         private RallyPickleball rallyBall;
 
-        private GameState currentState = GameState.HOME;
+        private GameState currentState = GameState.INTRO;
+        private Gender playerGender = Gender.MALE;
+        private Gender hoveredGender;
+        private final Rectangle maleGenderHitbox = new Rectangle(70, 94, 80, 20);
+        private final Rectangle femaleGenderHitbox = new Rectangle(170, 94, 80, 20);
         private String matchBanner = "";
         private double matchBannerTimer = 0;
         private double pulseTimer = 0;
@@ -821,6 +864,7 @@ public class PickleBallHomeScreen extends JFrame {
             initMenusAndDispatch();
             loadAssetsAndEntities();
             initInputListeners();
+            SwingUtilities.invokeLater(this::requestFocusInWindow);
 
             lastNanoTime = System.nanoTime();
             gameLoop = new Timer(16, this);
@@ -857,22 +901,21 @@ public class PickleBallHomeScreen extends JFrame {
                 ballSprite = spriteGrid[2][0];
             }
             leftPreviewFrames = redIdle != null
-                ? new BufferedImage[]{redIdle} : null;
+                    ? new BufferedImage[] { redIdle }
+                    : null;
 
             rallyBall = new RallyPickleball(92, 136, 128, 3, ballSprite);
 
             leftPlayer = new CourtPlayer(
-                40, 108, true, false,
-                avatarMenu.getCurrent().jerseyColor,
-                redIdle, redReady, redSwing, redWalkFrames, rallyBall
-            );
+                    40, 108, true, false,
+                    avatarMenu.getCurrent().jerseyColor,
+                    redIdle, redReady, redSwing, redWalkFrames, rallyBall);
 
             // Flip the second row so the blue player faces left toward the net.
             rightPlayer = new CourtPlayer(
-                258, 108, false, true,
-                Palette.RIVAL_CYAN,
-                blueIdle, blueReady, blueSwing, blueWalkFrames, rallyBall
-            );
+                    258, 108, false, true,
+                    Palette.RIVAL_CYAN,
+                    blueIdle, blueReady, blueSwing, blueWalkFrames, rallyBall);
 
             leftPlayer.setOpponent(rightPlayer);
             rightPlayer.setOpponent(leftPlayer);
@@ -911,8 +954,10 @@ public class PickleBallHomeScreen extends JFrame {
         }
 
         private void startMatch() {
-            if (leftPlayer != null) leftPlayer.reset(40, 108);
-            if (rightPlayer != null) rightPlayer.reset(258, 108);
+            if (leftPlayer != null)
+                leftPlayer.reset(40, 108);
+            if (rightPlayer != null)
+                rightPlayer.reset(258, 108);
             if (rallyBall != null) {
                 rallyBall.reset(92, 136, 128, 3);
                 rallyBall.launchToward(rightPlayer, 128.0);
@@ -928,6 +973,23 @@ public class PickleBallHomeScreen extends JFrame {
                 @Override
                 public void keyPressed(KeyEvent e) {
                     int code = e.getKeyCode();
+
+                    if (currentState == GameState.INTRO) {
+                        if (code == KeyEvent.VK_ENTER || code == KeyEvent.VK_SPACE) {
+                            currentState = GameState.GENDER;
+                        }
+                        return;
+                    }
+
+                    if (currentState == GameState.GENDER) {
+                        switch (code) {
+                            case KeyEvent.VK_LEFT, KeyEvent.VK_A -> playerGender = Gender.MALE;
+                            case KeyEvent.VK_RIGHT, KeyEvent.VK_D -> playerGender = Gender.FEMALE;
+                            case KeyEvent.VK_ENTER, KeyEvent.VK_SPACE -> currentState = GameState.HOME;
+                        }
+                        repaint();
+                        return;
+                    }
 
                     if (currentState == GameState.MAP) {
                         if (code == KeyEvent.VK_ESCAPE
@@ -985,8 +1047,29 @@ public class PickleBallHomeScreen extends JFrame {
 
             MouseAdapter mouseHandler = new MouseAdapter() {
                 @Override
+                public void mouseExited(MouseEvent e) {
+                    if (hoveredGender != null) {
+                        hoveredGender = null;
+                        repaint();
+                    }
+                }
+
+                @Override
                 public void mouseMoved(MouseEvent e) {
-                    if (currentState != GameState.HOME) return;
+                    if (currentState == GameState.GENDER) {
+                        int vx = e.getX() / SCALE;
+                        int vy = e.getY() / SCALE;
+                        Gender nextHovered = maleGenderHitbox.contains(vx, vy)
+                                ? Gender.MALE
+                                : femaleGenderHitbox.contains(vx, vy) ? Gender.FEMALE : null;
+                        if (hoveredGender != nextHovered) {
+                            hoveredGender = nextHovered;
+                            repaint();
+                        }
+                        return;
+                    }
+                    if (currentState != GameState.HOME)
+                        return;
                     int vx = e.getX() / SCALE;
                     int vy = e.getY() / SCALE;
                     for (Map.Entry<MenuAction, Rectangle> entry : buttonHitboxes.entrySet()) {
@@ -1001,6 +1084,24 @@ public class PickleBallHomeScreen extends JFrame {
                 public void mouseClicked(MouseEvent e) {
                     int vy = e.getY() / SCALE;
                     int vx = e.getX() / SCALE;
+
+                    if (currentState == GameState.INTRO) {
+                        currentState = GameState.GENDER;
+                        repaint();
+                        return;
+                    }
+
+                    if (currentState == GameState.GENDER) {
+                        if (maleGenderHitbox.contains(vx, vy)) {
+                            playerGender = Gender.MALE;
+                            currentState = GameState.HOME;
+                        } else if (femaleGenderHitbox.contains(vx, vy)) {
+                            playerGender = Gender.FEMALE;
+                            currentState = GameState.HOME;
+                        }
+                        repaint();
+                        return;
+                    }
 
                     if (currentState == GameState.AVATAR) {
                         if (vy >= 138) {
@@ -1054,9 +1155,12 @@ public class PickleBallHomeScreen extends JFrame {
             // should move as soon as the application opens without pressing PLAY.
             // PLAY simply resets the same entities and continues as the match.
             double step = Math.min(dt, 0.05);
-            if (rallyBall != null) rallyBall.update(step);
-            if (leftPlayer != null) leftPlayer.update(step);
-            if (rightPlayer != null) rightPlayer.update(step);
+            if (rallyBall != null)
+                rallyBall.update(step);
+            if (leftPlayer != null)
+                leftPlayer.update(step);
+            if (rightPlayer != null)
+                rightPlayer.update(step);
 
             repaint();
         }
@@ -1079,13 +1183,12 @@ public class PickleBallHomeScreen extends JFrame {
             if (currentState == GameState.MAP) {
                 if (mapBackground != null) {
                     g2.drawImage(
-                        mapBackground,
-                        0,
-                        0,
-                        VIRTUAL_WIDTH * SCALE,
-                        VIRTUAL_HEIGHT * SCALE,
-                        null
-                    );
+                            mapBackground,
+                            0,
+                            0,
+                            VIRTUAL_WIDTH * SCALE,
+                            VIRTUAL_HEIGHT * SCALE,
+                            null);
                 } else {
                     g2.setColor(Palette.SKY_MID);
                     g2.fillRect(0, 0, VIRTUAL_WIDTH * SCALE, VIRTUAL_HEIGHT * SCALE);
@@ -1099,7 +1202,8 @@ public class PickleBallHomeScreen extends JFrame {
 
             g2.scale(SCALE, SCALE);
 
-            // 1. Background layer (uses court_background.png if present, or crisp procedural fallback)
+            // 1. Background layer (uses court_background.png if present, or crisp
+            // procedural fallback)
             if (courtBackground != null) {
                 g2.drawImage(courtBackground, 0, 0, VIRTUAL_WIDTH, VIRTUAL_HEIGHT, null);
             } else {
@@ -1110,7 +1214,8 @@ public class PickleBallHomeScreen extends JFrame {
             // Buildings, trees, spectators, and the court remain completely still.
             drawMovingClouds(g2);
 
-            // 2. Live court demo: depth-sorted players & bouncing pickleball (also active on Home)
+            // 2. Live court demo: depth-sorted players & bouncing pickleball (also active
+            // on Home)
             List<PixelEntity> renderOrder = new ArrayList<>(worldEntities);
             renderOrder.sort((a, b) -> Double.compare(a.y, b.y));
             for (PixelEntity entity : renderOrder) {
@@ -1126,8 +1231,11 @@ public class PickleBallHomeScreen extends JFrame {
 
             // 4. Active Screen UI
             switch (currentState) {
+                case INTRO -> drawIntroOverlay(g2);
+                case GENDER -> drawGenderOverlay(g2);
                 case HOME -> drawHomeMenu(g2);
-                case PLAYING -> { /* The court is unobstructed during the rally. */ }
+                case PLAYING -> {
+                    /* The court is unobstructed during the rally. */ }
                 case AVATAR -> drawAvatarOverlay(g2);
                 case CREDITS -> drawCreditsOverlay(g2);
             }
@@ -1165,18 +1273,18 @@ public class PickleBallHomeScreen extends JFrame {
         private void drawPixelCloud(Graphics2D g, int x, int y, int scale) {
             int u = scale;
             g.setColor(new Color(151, 218, 247));
-            g.fillRect(x + 5*u, y + 7*u, 25*u, 5*u);
-            g.fillRect(x + 2*u, y + 9*u, 32*u, 3*u);
-            g.fillRect(x + 8*u, y + 4*u, 8*u, 6*u);
-            g.fillRect(x + 14*u, y + 1*u, 9*u, 9*u);
-            g.fillRect(x + 23*u, y + 5*u, 7*u, 6*u);
+            g.fillRect(x + 5 * u, y + 7 * u, 25 * u, 5 * u);
+            g.fillRect(x + 2 * u, y + 9 * u, 32 * u, 3 * u);
+            g.fillRect(x + 8 * u, y + 4 * u, 8 * u, 6 * u);
+            g.fillRect(x + 14 * u, y + 1 * u, 9 * u, 9 * u);
+            g.fillRect(x + 23 * u, y + 5 * u, 7 * u, 6 * u);
 
             g.setColor(new Color(250, 253, 255));
-            g.fillRect(x + 5*u, y + 6*u, 25*u, 4*u);
-            g.fillRect(x + 2*u, y + 8*u, 32*u, 3*u);
-            g.fillRect(x + 8*u, y + 3*u, 8*u, 6*u);
-            g.fillRect(x + 14*u, y, 9*u, 9*u);
-            g.fillRect(x + 23*u, y + 4*u, 7*u, 6*u);
+            g.fillRect(x + 5 * u, y + 6 * u, 25 * u, 4 * u);
+            g.fillRect(x + 2 * u, y + 8 * u, 32 * u, 3 * u);
+            g.fillRect(x + 8 * u, y + 3 * u, 8 * u, 6 * u);
+            g.fillRect(x + 14 * u, y, 9 * u, 9 * u);
+            g.fillRect(x + 23 * u, y + 4 * u, 7 * u, 6 * u);
         }
 
         private void drawProceduralFallbackCourt(Graphics2D g) {
@@ -1190,8 +1298,8 @@ public class PickleBallHomeScreen extends JFrame {
             g.setColor(Palette.COURT_OUTER);
             g.fillRect(0, 68, VIRTUAL_WIDTH, VIRTUAL_HEIGHT - 68);
 
-            int[] xPoints = {42, VIRTUAL_WIDTH - 42, VIRTUAL_WIDTH - 14, 14};
-            int[] yPoints = {78, 78, VIRTUAL_HEIGHT - 12, VIRTUAL_HEIGHT - 12};
+            int[] xPoints = { 42, VIRTUAL_WIDTH - 42, VIRTUAL_WIDTH - 14, 14 };
+            int[] yPoints = { 78, 78, VIRTUAL_HEIGHT - 12, VIRTUAL_HEIGHT - 12 };
             g.setColor(Palette.COURT_INNER);
             g.fillPolygon(xPoints, yPoints, 4);
 
@@ -1221,9 +1329,8 @@ public class PickleBallHomeScreen extends JFrame {
 
             PixelFont.draw(g, title, titleX + 2, titleY + 2, titleScale, titleSpacing, Palette.BTN_OUTLINE);
             PixelFont.drawOutlined(
-                g, title, titleX, titleY, titleScale, titleSpacing,
-                Palette.BALL_YELLOW, Palette.BTN_OUTLINE
-            );
+                    g, title, titleX, titleY, titleScale, titleSpacing,
+                    Palette.BALL_YELLOW, Palette.BTN_OUTLINE);
 
             // High-contrast subtitle banner
             String sub = "THE ULTIMATE PADDLE CHALLENGE";
@@ -1288,8 +1395,7 @@ public class PickleBallHomeScreen extends JFrame {
         }
 
         private void drawBeveledButton(
-            Graphics2D g, int x, int y, int w, int h, String label, boolean selected
-        ) {
+                Graphics2D g, int x, int y, int w, int h, String label, boolean selected) {
             // 1. Thick outer pixel border
             g.setColor(Palette.BTN_OUTLINE);
             g.fillRect(x - 1, y - 1, w + 2, h + 2);
@@ -1330,6 +1436,38 @@ public class PickleBallHomeScreen extends JFrame {
             PixelFont.drawCentered(g, display, x + (w / 2), y + 5, 1, 1, textColor);
         }
 
+        private void drawIntroOverlay(Graphics2D g) {
+            drawModalFrame(g, "WELCOME TO PICKLESMASH", "CLICK ANYWHERE TO CONTINUE");
+            PixelFont.drawCentered(
+                    g,
+                    "GET READY TO PLAY",
+                    VIRTUAL_WIDTH / 2,
+                    100,
+                    1,
+                    1,
+                    Palette.TEXT_WHITE);
+        }
+
+        private void drawGenderOverlay(Graphics2D g) {
+            drawModalFrame(g, "SELECT YOUR GENDER", "LEFT/RIGHT: SELECT  ENTER: CONTINUE");
+            drawBeveledButton(
+                    g,
+                    maleGenderHitbox.x,
+                    maleGenderHitbox.y,
+                    maleGenderHitbox.width,
+                    maleGenderHitbox.height,
+                    Gender.MALE.label,
+                    hoveredGender == Gender.MALE);
+            drawBeveledButton(
+                    g,
+                    femaleGenderHitbox.x,
+                    femaleGenderHitbox.y,
+                    femaleGenderHitbox.width,
+                    femaleGenderHitbox.height,
+                    Gender.FEMALE.label,
+                    hoveredGender == Gender.FEMALE);
+        }
+
         private void drawAvatarOverlay(Graphics2D g) {
             drawModalFrame(g, "SELECT AVATAR", "LEFT/RIGHT: CYCLE  ENTER: DONE");
             AvatarPreset active = avatarMenu.getCurrent();
@@ -1352,7 +1490,8 @@ public class PickleBallHomeScreen extends JFrame {
                     tintedPreviewPreset = active;
                 }
                 int previewH = 30;
-                int previewW = Math.max(8, (int) Math.round(previewH * (double) tintedPreview.getWidth() / tintedPreview.getHeight()));
+                int previewW = Math.max(8,
+                        (int) Math.round(previewH * (double) tintedPreview.getWidth() / tintedPreview.getHeight()));
                 int previewX = boxX + (boxSize - previewW) / 2;
                 g.drawImage(tintedPreview, previewX, boxY + 3, previewW, previewH, null);
             } else {
@@ -1367,10 +1506,10 @@ public class PickleBallHomeScreen extends JFrame {
         private void drawCreditsOverlay(Graphics2D g) {
             drawModalFrame(g, "GAME CREDITS", "PRESS ENTER OR CLICK TO RETURN");
             String[] lines = {
-                "-----Members-----",
-                "FABRICANTE, CRIS HARVEY G.",
-                "   PADERNAL, REYMAR T.    ",
-                "   SALARDA, JERULD T.    "
+                    "-----Members-----",
+                    "FABRICANTE, CRIS HARVEY G.",
+                    "   PADERNAL, REYMAR T.    ",
+                    "   SALARDA, JERULD T.    "
             };
             int y = 74;
             for (String line : lines) {
