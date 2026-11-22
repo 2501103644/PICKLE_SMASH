@@ -85,6 +85,7 @@ public class PickleBallHomeScreen extends JFrame {
     enum GameState {
         HOME,
         PLAYING,
+        MAP,
         AVATAR,
         CREDITS
     }
@@ -794,6 +795,7 @@ public class PickleBallHomeScreen extends JFrame {
         private final Map<MenuAction, Rectangle> buttonHitboxes = new HashMap<>();
 
         private BufferedImage courtBackground;
+        private BufferedImage mapBackground;
         private BufferedImage tintedPreview;
         private AvatarPreset tintedPreviewPreset;
         private BufferedImage[] leftPreviewFrames;
@@ -827,6 +829,7 @@ public class PickleBallHomeScreen extends JFrame {
 
         private void loadAssetsAndEntities() {
             courtBackground = AssetLoader.loadImage("court_background");
+            mapBackground = AssetLoader.loadImage("pickleball_map");
 
             BufferedImage rawSheet = AssetLoader.loadImage("spritesheet");
             BufferedImage cleanSheet = AssetLoader.stripWhiteBackground(rawSheet, 22);
@@ -916,7 +919,7 @@ public class PickleBallHomeScreen extends JFrame {
             }
             matchBanner = "";
             matchBannerTimer = 0;
-            currentState = GameState.PLAYING;
+            currentState = GameState.MAP;
             requestFocusInWindow();
         }
 
@@ -925,6 +928,15 @@ public class PickleBallHomeScreen extends JFrame {
                 @Override
                 public void keyPressed(KeyEvent e) {
                     int code = e.getKeyCode();
+
+                    if (currentState == GameState.MAP) {
+                        if (code == KeyEvent.VK_ESCAPE
+                                || code == KeyEvent.VK_ENTER
+                                || code == KeyEvent.VK_SPACE) {
+                            currentState = GameState.HOME;
+                        }
+                        return;
+                    }
 
                     if (currentState == GameState.PLAYING) {
                         if (code == KeyEvent.VK_ESCAPE) {
@@ -1063,9 +1075,28 @@ public class PickleBallHomeScreen extends JFrame {
             // New path: 1376px court -> 1280px BILINEAR in one step (~0.93x),
             // sprites sampled once, directly to screen size.
             g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-            // All game logic still works in 320x180 coordinates; scale the
-            // drawing so 1 logical pixel = 4 screen pixels. fillRect and
-            // the pixel font stay as crisp 4px squares; only images smooth.
+
+            if (currentState == GameState.MAP) {
+                if (mapBackground != null) {
+                    g2.drawImage(
+                        mapBackground,
+                        0,
+                        0,
+                        VIRTUAL_WIDTH * SCALE,
+                        VIRTUAL_HEIGHT * SCALE,
+                        null
+                    );
+                } else {
+                    g2.setColor(Palette.SKY_MID);
+                    g2.fillRect(0, 0, VIRTUAL_WIDTH * SCALE, VIRTUAL_HEIGHT * SCALE);
+                }
+                g2.dispose();
+
+                Graphics2D screen = (Graphics2D) g;
+                screen.drawImage(pixelBuffer, 0, 0, VIRTUAL_WIDTH * SCALE, VIRTUAL_HEIGHT * SCALE, null);
+                return;
+            }
+
             g2.scale(SCALE, SCALE);
 
             // 1. Background layer (uses court_background.png if present, or crisp procedural fallback)
