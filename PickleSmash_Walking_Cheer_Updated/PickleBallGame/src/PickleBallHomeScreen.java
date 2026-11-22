@@ -29,16 +29,36 @@ public class PickleBallHomeScreen extends JFrame {
     public static final int VIRTUAL_WIDTH = 320;
     public static final int VIRTUAL_HEIGHT = 180;
     public static final int SCALE = 4;
+    private final GameCanvas canvas;
 
     public PickleBallHomeScreen() {
         setTitle("PICKLE SMASH - THE ULTIMATE PADDLE CHALLENGE");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
 
-        GameCanvas canvas = new GameCanvas();
-        add(canvas);
+        canvas = new GameCanvas();
+        setContentPane(canvas);
         pack();
         setLocationRelativeTo(null);
+    }
+
+    private void showCityMap(PickleSmashCityMap cityMap) {
+        setTitle("Pickle Smash — City & Town Map");
+        setContentPane(cityMap);
+        pack();
+        setLocationRelativeTo(null);
+        validate();
+        cityMap.start();
+        SwingUtilities.invokeLater(cityMap::requestFocusInWindow);
+    }
+
+    private void showHomeScreen() {
+        setTitle("PICKLE SMASH - THE ULTIMATE PADDLE CHALLENGE");
+        setContentPane(canvas);
+        pack();
+        setLocationRelativeTo(null);
+        validate();
+        SwingUtilities.invokeLater(canvas::requestFocusInWindow);
     }
 
     public static void main(String[] args) {
@@ -834,7 +854,6 @@ public class PickleBallHomeScreen extends JFrame {
         private final Map<MenuAction, Rectangle> buttonHitboxes = new HashMap<>();
 
         private BufferedImage courtBackground;
-        private BufferedImage mapBackground;
         private BufferedImage tintedPreview;
         private AvatarPreset tintedPreviewPreset;
         private BufferedImage[] leftPreviewFrames;
@@ -873,7 +892,6 @@ public class PickleBallHomeScreen extends JFrame {
 
         private void loadAssetsAndEntities() {
             courtBackground = AssetLoader.loadImage("court_background");
-            mapBackground = AssetLoader.loadImage("pickleball_map");
 
             BufferedImage rawSheet = AssetLoader.loadImage("spritesheet");
             BufferedImage cleanSheet = AssetLoader.stripWhiteBackground(rawSheet, 22);
@@ -965,7 +983,15 @@ public class PickleBallHomeScreen extends JFrame {
             matchBanner = "";
             matchBannerTimer = 0;
             currentState = GameState.MAP;
-            requestFocusInWindow();
+            PickleBallHomeScreen owner = (PickleBallHomeScreen) SwingUtilities.getWindowAncestor(this);
+            PickleSmashCityMap cityMap = new PickleSmashCityMap();
+            cityMap.setPlayerJerseyColor(avatarMenu.getCurrent().jerseyColor);
+            cityMap.setExitAction(() -> {
+                cityMap.stop();
+                currentState = GameState.HOME;
+                owner.showHomeScreen();
+            });
+            owner.showCityMap(cityMap);
         }
 
         private void initInputListeners() {
@@ -1155,12 +1181,11 @@ public class PickleBallHomeScreen extends JFrame {
             // should move as soon as the application opens without pressing PLAY.
             // PLAY simply resets the same entities and continues as the match.
             double step = Math.min(dt, 0.05);
-            if (rallyBall != null)
-                rallyBall.update(step);
-            if (leftPlayer != null)
-                leftPlayer.update(step);
-            if (rightPlayer != null)
-                rightPlayer.update(step);
+            if (currentState != GameState.MAP) {
+                if (rallyBall != null) rallyBall.update(step);
+                if (leftPlayer != null) leftPlayer.update(step);
+                if (rightPlayer != null) rightPlayer.update(step);
+            }
 
             repaint();
         }
@@ -1179,26 +1204,6 @@ public class PickleBallHomeScreen extends JFrame {
             // New path: 1376px court -> 1280px BILINEAR in one step (~0.93x),
             // sprites sampled once, directly to screen size.
             g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-
-            if (currentState == GameState.MAP) {
-                if (mapBackground != null) {
-                    g2.drawImage(
-                            mapBackground,
-                            0,
-                            0,
-                            VIRTUAL_WIDTH * SCALE,
-                            VIRTUAL_HEIGHT * SCALE,
-                            null);
-                } else {
-                    g2.setColor(Palette.SKY_MID);
-                    g2.fillRect(0, 0, VIRTUAL_WIDTH * SCALE, VIRTUAL_HEIGHT * SCALE);
-                }
-                g2.dispose();
-
-                Graphics2D screen = (Graphics2D) g;
-                screen.drawImage(pixelBuffer, 0, 0, VIRTUAL_WIDTH * SCALE, VIRTUAL_HEIGHT * SCALE, null);
-                return;
-            }
 
             g2.scale(SCALE, SCALE);
 
@@ -1234,8 +1239,8 @@ public class PickleBallHomeScreen extends JFrame {
                 case INTRO -> drawIntroOverlay(g2);
                 case GENDER -> drawGenderOverlay(g2);
                 case HOME -> drawHomeMenu(g2);
-                case PLAYING -> {
-                    /* The court is unobstructed during the rally. */ }
+                case PLAYING -> { /* The court is unobstructed during the rally. */ }
+                case MAP -> { /* The city map is hosted directly in the game window. */ }
                 case AVATAR -> drawAvatarOverlay(g2);
                 case CREDITS -> drawCreditsOverlay(g2);
             }

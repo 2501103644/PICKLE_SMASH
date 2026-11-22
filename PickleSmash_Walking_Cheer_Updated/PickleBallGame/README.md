@@ -17,6 +17,9 @@ This is the current Home Screen development build. It keeps the menu visible whi
 ## Project layout
 
 - `src/PickleBallHomeScreen.java` — main Swing window, live demo loop, menu states, player movement, walk/swing animation states, ball physics, and moving clouds.
+- `src/PickleSmashCityMap.java` — walkable city map opened from PLAY; its player uses the Home screen sprites for sideways movement and generated front/back walking animations for vertical movement.
+- `assets/city_buildings_sheet.png` — transparent building sprites used throughout the city map.
+- `assets/grass_texture.png` — tiled pixel-grass texture used as the city map's ground layer.
 - `src/Main.java` — simple application entry point that opens the home screen.
 - `src/AssetLoader.java` — image loading, sprite sheet slicing, transparency processing, and jersey tinting.
 - `assets/court_background.png` — city pickleball court background.
@@ -44,8 +47,9 @@ This is the current Home Screen development build. It keeps the menu visible whi
 
 - Home: UP/DOWN or W/S to select; ENTER or SPACE to activate.
 - Avatar: LEFT/RIGHT or A/D to change preset; ENTER or ESC to return.
-- Match: ESC returns to Home.
+- City map: WASD or arrow keys to walk; hold SHIFT to jog. Use the mouse wheel or +/- to zoom, M for full-map view, and E or SPACE near a landmark to inspect it. ESC returns to Home (or closes an open landmark panel first).
+- City map: press 1–4 to warp between districts; F12 exports a full-resolution PNG.
 
 ## Notes
 
-The court preview runs automatically behind Home, Avatar, and Credits. PLAY resets the rally and enters the current match screen. The actual game mode is still under development; this build is intended to let you see and refine the Home Screen presentation and animated court preview.
+The court preview runs automatically behind Home, Avatar, and Credits. PLAY replaces the old static map screen with the walkable city in `PickleSmashCityMap.java`.
