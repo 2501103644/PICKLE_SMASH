@@ -326,8 +326,6 @@ public class PickleSmashCityMap extends JPanel implements Runnable, KeyListener,
 
         addMapSpriteProp("barangay_hall", 750, 58, 430, 193, 251);
         addBuildingCollision(827, 108, 274, 100, 56);
-        addMapSpriteProp("house_blue_roof", 645, 113, 122, 150, 263);
-        addBuildingCollision(675, 193, 56, 49, 30);
         pinBanners.add(new PinBanner("BARANGAY LEVEL", 1160, 85));
         landmarks.add(new Landmark(
             "BARANGAY HALL", "BARANGAY LEVEL",
@@ -406,7 +404,6 @@ public class PickleSmashCityMap extends JPanel implements Runnable, KeyListener,
         addSolidBox(1374, 810, 22, 88);
         addSolidBox(1720, 810, 22, 88);
         addMapSpriteProp("bench", 1390, 945, 66, 34, 976);
-        addMapSpriteProp("street_lamp", 1253, 812, 22, 72, 884);
         addMapSpriteProp("street_lamp", 1764, 812, 22, 72, 884);
         pinBanners.add(new PinBanner("PROVINCIAL LEVEL", 1523, 706));
         landmarks.add(new Landmark(
@@ -414,12 +411,6 @@ public class PickleSmashCityMap extends JPanel implements Runnable, KeyListener,
             "The open-air provincial pickleball pavilion and its nearby community grounds.", 1620, 980, 115
         ));
 
-        addMapSpriteProp("river_feature", 1650, 774, 380, 188, 890);
-        pinBanners.add(new PinBanner("RIVER & WOODEN BRIDGE", 1880, 766));
-        landmarks.add(new Landmark(
-            "RIVER WATERFALL & BRIDGE", "RIVER FEATURE",
-            "Follow the eastern road to the river and cross on the wooden bridge.", 1945, 916, 115
-        ));
 
         addTreeProp(1120, 555, "tree_large", 74, 108);
         addTreeProp(560, 918, "tree_large", 77, 112);

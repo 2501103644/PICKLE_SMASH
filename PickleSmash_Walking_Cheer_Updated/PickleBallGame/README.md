@@ -53,4 +53,4 @@ This is the current Home Screen development build. It keeps the menu visible whi
 
 ## Notes
 
-The court preview runs automatically behind Home, Avatar, and Credits. PLAY opens the map in `PickleSmashCityMap.java`. Buildings, trees, and river water block movement; roads, sidewalks, courts, plaza, dirt paths, and the river bridge remain walkable. The map pack must be placed at `PickleBallGame/assets/map/` beside `assets/spritesheet.png`.
+The court preview runs automatically behind Home, Avatar, and Credits. PLAY opens the map in `PickleSmashCityMap.java`. Buildings, trees, and river water block movement; roads, sidewalks, courts, plaza, and dirt paths remain walkable. The map pack must be placed at `PickleBallGame/assets/map/` beside `assets/spritesheet.png`.

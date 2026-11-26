@@ -37,7 +37,6 @@ public final class MapAssetRegistry {
         paths.put("water_tile", "Sprites/Atlas_03/A03_Sprite_121.png");
         paths.put("bridge", "Sprites/Atlas_03/A03_Sprite_121.png");
         paths.put("waterfall", "Sprites/Atlas_03/A03_Sprite_121.png");
-        paths.put("river_feature", "Sprites/Atlas_03/A03_Sprite_121.png");
         paths.put("crop_rows", "Sprites/Atlas_03/A03_Sprite_033.png");
         paths.put("street_sign", "Sprites/Atlas_01/A01_Sprite_090.png");
         ASSET_PATHS = Collections.unmodifiableMap(paths);
