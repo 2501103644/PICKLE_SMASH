@@ -37,9 +37,20 @@ public final class MapAssetRegistry {
         paths.put("water_tile", "Sprites/Atlas_03/A03_Sprite_121.png");
         paths.put("bridge", "Sprites/Atlas_03/A03_Sprite_121.png");
         paths.put("waterfall", "Sprites/Atlas_03/A03_Sprite_121.png");
-        paths.put("river_feature", "Sprites/Atlas_03/A03_Sprite_121.png");
         paths.put("crop_rows", "Sprites/Atlas_03/A03_Sprite_033.png");
         paths.put("street_sign", "Sprites/Atlas_01/A01_Sprite_090.png");
+        paths.put("flower_patch", "Sprites/Atlas_03/A03_Sprite_079.png");
+        paths.put("flower_bush", "Sprites/Atlas_03/A03_Sprite_073.png");
+        paths.put("flower_planter", "Sprites/Atlas_01/A01_Sprite_147.png");
+        paths.put("flower_planter_round", "Sprites/Atlas_01/A01_Sprite_159.png");
+        paths.put("bush_hedge", "Sprites/Atlas_03/A03_Sprite_068.png");
+        paths.put("bush_round", "Sprites/Atlas_03/A03_Sprite_069.png");
+        paths.put("bush_flowering", "Sprites/Atlas_03/A03_Sprite_070.png");
+        paths.put("bush_small", "Sprites/Atlas_03/A03_Sprite_071.png");
+        paths.put("bush_wide", "Sprites/Atlas_03/A03_Sprite_072.png");
+        paths.put("bush_long", "Sprites/Atlas_03/A03_Sprite_074.png");
+        paths.put("bush_low", "Sprites/Atlas_03/A03_Sprite_076.png");
+        paths.put("bush_long_flowering", "Sprites/Atlas_03/A03_Sprite_077.png");
         ASSET_PATHS = Collections.unmodifiableMap(paths);
     }
 

@@ -150,6 +150,10 @@ public final class AssetLoader {
         return null;
     }
 
+    public static File getAssetsDirectory() {
+        return resolveAssetsDirectory();
+    }
+
     /**
      * Converts near-white backdrop pixels to transparent ARGB so sprites blend cleanly over the court.
      */

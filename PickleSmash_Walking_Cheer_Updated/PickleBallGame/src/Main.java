@@ -5,7 +5,13 @@ public final class Main {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(Main::launchGame);
+        SwingUtilities.invokeLater(() -> {
+            if (args.length > 0 && ("--editor".equalsIgnoreCase(args[0]) || "--map-editor".equalsIgnoreCase(args[0]))) {
+                new MapEditor().setVisible(true);
+            } else {
+                launchGame();
+            }
+        });
     }
 
     private static void launchGame() {

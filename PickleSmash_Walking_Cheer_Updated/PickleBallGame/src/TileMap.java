@@ -19,7 +19,6 @@ public final class TileMap {
     private final byte[][] ground = new byte[ROWS][COLUMNS];
     private final boolean[][] roads = new boolean[ROWS][COLUMNS];
     private final boolean[][] water = new boolean[ROWS][COLUMNS];
-    private final boolean[][] bridge = new boolean[ROWS][COLUMNS];
     private final List<int[]> horizontalRoads = new ArrayList<>();
     private final List<int[]> verticalRoads = new ArrayList<>();
 
@@ -57,7 +56,6 @@ public final class TileMap {
 
         drawSidewalks(g, pavement);
         drawRoads(g);
-        drawBridgeApproaches(g);
     }
 
     public boolean blocks(Rectangle2D bounds) {
@@ -68,7 +66,7 @@ public final class TileMap {
         for (int row = top; row <= bottom; row++) {
             for (int column = left; column <= right; column++) {
                 if (column < 0 || column >= COLUMNS || row < 0 || row >= ROWS
-                        || (water[row][column] && !bridge[row][column])) {
+                        || water[row][column]) {
                     return true;
                 }
             }
@@ -80,7 +78,7 @@ public final class TileMap {
         g.setColor(new Color(255, 40, 40, 90));
         for (int row = 0; row < ROWS; row++) {
             for (int column = 0; column < COLUMNS; column++) {
-                if (water[row][column] && !bridge[row][column]) {
+                if (water[row][column]) {
                     g.fillRect(column * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE);
                     g.drawRect(column * TILE_SIZE, row * TILE_SIZE, TILE_SIZE, TILE_SIZE);
                 }
@@ -126,9 +124,6 @@ public final class TileMap {
             for (int column = 60; column < COLUMNS; column++) {
                 water[row][column] = true;
             }
-        }
-        for (int column = 60; column < COLUMNS; column++) {
-            bridge[28][column] = true;
         }
     }
 
@@ -224,16 +219,6 @@ public final class TileMap {
             int x = (road[0] * TILE_SIZE) + TILE_SIZE / 2;
             g.drawLine(x, road[1] * TILE_SIZE, x, (road[2] + 1) * TILE_SIZE);
         }
-    }
-
-    private void drawBridgeApproaches(Graphics2D g) {
-        int y = 28 * TILE_SIZE;
-        g.setColor(new Color(153, 111, 69));
-        g.fillRect(60 * TILE_SIZE, y + 5, 4 * TILE_SIZE, TILE_SIZE - 10);
-        g.setColor(new Color(82, 50, 27));
-        g.setStroke(new BasicStroke(3f));
-        g.drawLine(60 * TILE_SIZE, y + 4, WORLD_WIDTH, y + 4);
-        g.drawLine(60 * TILE_SIZE, y + TILE_SIZE - 4, WORLD_WIDTH, y + TILE_SIZE - 4);
     }
 
     private void drawWaterCell(Graphics2D g, int x, int y, int row, int column) {

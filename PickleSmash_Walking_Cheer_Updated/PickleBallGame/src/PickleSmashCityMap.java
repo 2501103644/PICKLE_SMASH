@@ -39,6 +39,9 @@ public class PickleSmashCityMap extends JPanel implements Runnable, KeyListener,
     private BufferedImage worldBaseCache;
     private final TileMap tileMap = new TileMap();
     private final MapAssetRegistry mapAssets;
+    private long mapLayoutModified = Long.MIN_VALUE;
+    private long mapLayoutLength = -1;
+    private long lastMapLayoutCheck;
     private BufferedImage basePlayerIdleSprite;
     private BufferedImage playerIdleSprite;
     private BufferedImage[] basePlayerWalkSprites;
@@ -326,8 +329,6 @@ public class PickleSmashCityMap extends JPanel implements Runnable, KeyListener,
 
         addMapSpriteProp("barangay_hall", 750, 58, 430, 193, 251);
         addBuildingCollision(827, 108, 274, 100, 56);
-        addMapSpriteProp("house_blue_roof", 645, 113, 122, 150, 263);
-        addBuildingCollision(675, 193, 56, 49, 30);
         pinBanners.add(new PinBanner("BARANGAY LEVEL", 1160, 85));
         landmarks.add(new Landmark(
             "BARANGAY HALL", "BARANGAY LEVEL",
@@ -406,7 +407,6 @@ public class PickleSmashCityMap extends JPanel implements Runnable, KeyListener,
         addSolidBox(1374, 810, 22, 88);
         addSolidBox(1720, 810, 22, 88);
         addMapSpriteProp("bench", 1390, 945, 66, 34, 976);
-        addMapSpriteProp("street_lamp", 1253, 812, 22, 72, 884);
         addMapSpriteProp("street_lamp", 1764, 812, 22, 72, 884);
         pinBanners.add(new PinBanner("PROVINCIAL LEVEL", 1523, 706));
         landmarks.add(new Landmark(
@@ -414,17 +414,57 @@ public class PickleSmashCityMap extends JPanel implements Runnable, KeyListener,
             "The open-air provincial pickleball pavilion and its nearby community grounds.", 1620, 980, 115
         ));
 
-        addMapSpriteProp("river_feature", 1650, 774, 380, 188, 890);
-        pinBanners.add(new PinBanner("RIVER & WOODEN BRIDGE", 1880, 766));
-        landmarks.add(new Landmark(
-            "RIVER WATERFALL & BRIDGE", "RIVER FEATURE",
-            "Follow the eastern road to the river and cross on the wooden bridge.", 1945, 916, 115
-        ));
 
         addTreeProp(1120, 555, "tree_large", 74, 108);
         addTreeProp(560, 918, "tree_large", 77, 112);
         addTreeProp(1170, 920, "tree_large", 76, 110);
         addTreeProp(1815, 980, "palm_tree", 72, 98);
+        applyMapLayoutOverride();
+    }
+
+    private void applyMapLayoutOverride() {
+        java.util.List<MapLayoutStore.Entry> layout = MapLayoutStore.load();
+        if (layout == null) {
+            return;
+        }
+
+        depthSortedProps.clear();
+        solidColliders.clear();
+        for (MapLayoutStore.Entry entry : layout) {
+            if (entry.blocking) {
+                addSolidBox(entry.x, entry.y, entry.width, entry.height);
+            }
+            final MapLayoutStore.Entry prop = entry;
+            depthSortedProps.add(new WorldProp(
+                prop.sortY,
+                (g, time) -> {
+                    BufferedImage sprite = mapAssets.get(prop.assetKey);
+                    g.drawImage(sprite, prop.x, prop.y, prop.width, prop.height, null);
+                }
+            ));
+        }
+        java.io.File layoutFile = MapLayoutStore.getLayoutFile();
+        mapLayoutModified = layoutFile.isFile() ? layoutFile.lastModified() : Long.MIN_VALUE;
+        mapLayoutLength = layoutFile.isFile() ? layoutFile.length() : -1;
+        repaint();
+    }
+
+    private void checkForMapLayoutChanges(long now) {
+        if (now - lastMapLayoutCheck < 500_000_000L) {
+            return;
+        }
+        lastMapLayoutCheck = now;
+        java.io.File layoutFile = MapLayoutStore.getLayoutFile();
+        long modified = layoutFile.isFile() ? layoutFile.lastModified() : Long.MIN_VALUE;
+        long length = layoutFile.isFile() ? layoutFile.length() : -1;
+        if (modified == mapLayoutModified && length == mapLayoutLength) {
+            return;
+        }
+        mapLayoutModified = modified;
+        mapLayoutLength = length;
+        if (modified != Long.MIN_VALUE) {
+            SwingUtilities.invokeLater(this::applyMapLayoutOverride);
+        }
     }
 
 
@@ -579,6 +619,7 @@ public class PickleSmashCityMap extends JPanel implements Runnable, KeyListener,
             double dt = Math.min(0.05, (now - lastTime) / 1_000_000_000.0);
             lastTime = now;
 
+            checkForMapLayoutChanges(now);
             update(dt);
             repaint();
 
