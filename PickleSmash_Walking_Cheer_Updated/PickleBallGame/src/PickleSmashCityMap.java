@@ -308,7 +308,7 @@ public class PickleSmashCityMap extends JPanel implements Runnable, KeyListener,
     }
 
     /**
-     * Configures all buildings, courts, trees, collisions, pins, and interactive landmarks
+     * Configures all buildings, trees, collisions, pins, and interactive landmarks
      * to match the exact layout of the Pickle Smash town & city map.
      */
     private void buildWorldData() {
@@ -318,26 +318,20 @@ public class PickleSmashCityMap extends JPanel implements Runnable, KeyListener,
         pinBanners.clear();
 
         addMapSpriteProp("training_building", 180, 58, 369, 171, 229);
-        addMapSpriteProp("blue_court", 250, 211, 217, 93, 304);
         addBuildingCollision(292, 105, 150, 88, 52);
-        addSolidBox(357, 211, 4, 93);
-        addCourtFenceWithOpenSouthGate(250, 211, 217, 93);
         landmarks.add(new Landmark(
-            "TRAINING CAMPUS & PICKLEBALL COURT", "TRAINING DISTRICT",
-            "Practice serves, dinks, and rallies at the town training campus.", 500, 268, 100
+            "TRAINING CAMPUS", "TRAINING DISTRICT",
+            "The town's pickleball training campus.", 500, 268, 100
         ));
 
         addMapSpriteProp("barangay_hall", 750, 58, 430, 193, 251);
-        addMapSpriteProp("blue_court", 842, 195, 217, 93, 290);
         addBuildingCollision(827, 108, 274, 100, 56);
-        addSolidBox(949, 195, 4, 93);
-        addCourtFenceWithOpenSouthGate(842, 195, 217, 93);
         addMapSpriteProp("house_blue_roof", 645, 113, 122, 150, 263);
         addBuildingCollision(675, 193, 56, 49, 30);
         pinBanners.add(new PinBanner("BARANGAY LEVEL", 1160, 85));
         landmarks.add(new Landmark(
-            "BARANGAY HALL & COMMUNITY COURT", "BARANGAY LEVEL",
-            "The barangay hall and its neighborhood pickleball court.", 1070, 270, 100
+            "BARANGAY HALL", "BARANGAY LEVEL",
+            "The barangay hall and nearby homes.", 1070, 270, 100
         ));
 
         addMapSpriteProp("house_red_roof", 1325, 97, 122, 180, 277);
@@ -448,25 +442,6 @@ public class PickleSmashCityMap extends JPanel implements Runnable, KeyListener,
         ));
     }
 
-    private void addRotatedMapSpriteProp(String assetKey, int x, int y, int width, int height, double sortY) {
-        BufferedImage sprite = mapAssets.get(assetKey);
-        depthSortedProps.add(new WorldProp(sortY, (g, t) -> {
-            double centerX = x + width / 2.0;
-            double centerY = y + height / 2.0;
-            AffineTransform original = g.getTransform();
-            g.rotate(Math.PI / 2.0, centerX, centerY);
-            g.drawImage(
-                sprite,
-                (int) Math.round(centerX - height / 2.0),
-                (int) Math.round(centerY - width / 2.0),
-                height,
-                width,
-                null
-            );
-            g.setTransform(original);
-        }));
-    }
-
     private void addBuildingCollision(double x, double y, double width, double height, double doorGap) {
         double wallHeight = Math.max(12, height - 20);
         double sideWidth = Math.max(0, (width - doorGap) / 2);
@@ -474,22 +449,6 @@ public class PickleSmashCityMap extends JPanel implements Runnable, KeyListener,
         addSolidBox(x, y + wallHeight, sideWidth, height - wallHeight);
         addSolidBox(x + width - sideWidth, y + wallHeight, sideWidth, height - wallHeight);
     }
-
-    private void addCourtFenceWithOpenSouthGate(int x, int y, int width, int height) {
-        int gateWidth = 48;
-        int fenceWidth = (width - gateWidth) / 2;
-        addMapSpriteProp("fence", x, y - 28, fenceWidth, 28, y + height + 1);
-        addMapSpriteProp(
-            "fence", x + fenceWidth + gateWidth, y - 28, width - fenceWidth - gateWidth, 28, y + height + 1
-        );
-        addRotatedMapSpriteProp("fence", x - 16, y, 16, height - 18, y + height + 1);
-        addRotatedMapSpriteProp("fence", x + width, y, 16, height - 18, y + height + 1);
-        addSolidBox(x, y - 8, fenceWidth, 8);
-        addSolidBox(x + fenceWidth + gateWidth, y - 8, width - fenceWidth - gateWidth, 8);
-        addSolidBox(x - 8, y, 8, height - 18);
-        addSolidBox(x + width, y, 8, height - 18);
-    }
-
 
     private void addTreeProp(int centerX, int baseY, String assetKey, int width, int height) {
         addSolidBox(centerX - 11, baseY - 15, 22, 16);
@@ -789,7 +748,7 @@ public class PickleSmashCityMap extends JPanel implements Runnable, KeyListener,
         // Draw the tile layers baked at native world resolution.
         g.drawImage(worldBaseCache, 0, 0, null);
 
-        // Depth-sort all buildings, courts, trees & character by Y coordinate
+        // Depth-sort map props and the character by Y coordinate
         List<WorldProp> frameList = new ArrayList<>(depthSortedProps);
         if (includePlayer) {
             frameList.add(new WorldProp(playerY, (pg, t) -> drawWalkableCharacter(pg, playerX, playerY)));

@@ -26,7 +26,6 @@ public final class MapAssetRegistry {
         paths.put("palm_tree", "Sprites/Atlas_03/A03_Sprite_062.png");
         paths.put("street_lamp", "Sprites/Atlas_01/A01_Sprite_077.png");
         paths.put("bench", "Sprites/Atlas_01/A01_Sprite_105.png");
-        paths.put("fence", "Sprites/Atlas_01/A01_Sprite_094.png");
         paths.put("road_straight", "Sprites/Atlas_02/A02_Sprite_015.png");
         paths.put("road_vertical", "Sprites/Atlas_02/A02_Sprite_017.png");
         paths.put("road_corner", "Sprites/Atlas_02/A02_Sprite_018.png");
@@ -40,7 +39,6 @@ public final class MapAssetRegistry {
         paths.put("bridge", "Sprites/Atlas_03/A03_Sprite_121.png");
         paths.put("waterfall", "Sprites/Atlas_03/A03_Sprite_121.png");
         paths.put("river_feature", "Sprites/Atlas_03/A03_Sprite_121.png");
-        paths.put("blue_court", "Sprites/Atlas_02/A02_Sprite_077.png");
         paths.put("crop_rows", "Sprites/Atlas_03/A03_Sprite_033.png");
         paths.put("street_sign", "Sprites/Atlas_01/A01_Sprite_090.png");
         ASSET_PATHS = Collections.unmodifiableMap(paths);
