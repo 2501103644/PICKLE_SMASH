@@ -11,7 +11,7 @@ house_blue_roof,464,408,112,138,572,true
 street_sign,292,515,38,42,557,false
 fountain,864,352,224,278,560,false
 bench,792,568,62,32,574,false
-city_level_complex,1512,376,200,178,800,false
+city_level_complex,1424,376,300,178,800,false
 office_tower,1880,536,104,170,548,true
 house_red_roof,180,704,122,180,884,true
 house_blue_roof,285,735,122,150,885,true
@@ -174,7 +174,7 @@ palm_tree,232,40,91,124,669,false
 road_straight,-8,288,95,97,365,false
 road_straight,24,288,95,97,381,false
 road_straight,96,288,95,97,397,false
-road_straight,168,288,95,97,413,false
+road_straight,160,288,95,97,413,false
 road_straight,240,288,95,97,429,false
 road_straight,312,288,95,97,445,false
 road_straight,384,288,95,97,461,false
@@ -215,7 +215,7 @@ bush_long_flowering,1752,952,97,44,668,false
 bench,1720,912,66,34,992,false
 palm_tree,1296,840,72,98,996,true
 tree_large,1760,640,88,130,620,false
-tree_large,1304,640,88,130,636,false
+tree_large,1728,336,88,130,850,false
 grass_tile_alt,1304,368,198,200,650,false
 grass_tile_alt,1464,368,198,200,666,false
 grass_tile_alt,1592,368,198,200,682,false
@@ -235,3 +235,11 @@ grass_tile,488,880,87,88,729,false
 grass_tile,496,808,87,88,745,false
 grass_tile,496,752,87,88,761,false
 grass_tile,504,688,87,88,777,false
+bush_long_flowering,1304,536,97,44,952,false
+bush_long_flowering,1752,536,97,44,968,false
+bush_long_flowering,1384,536,97,44,968,false
+bush_long_flowering,1672,536,97,44,984,false
+bench,1336,496,66,34,992,false
+bench,1744,496,66,34,1008,false
+tree_large,1320,656,88,130,652,false
+tree_large,1328,344,88,130,866,false
