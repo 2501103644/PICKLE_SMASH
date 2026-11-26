@@ -19,7 +19,9 @@ This is the current Home Screen development build. It keeps the menu visible whi
 - `src/PickleBallHomeScreen.java` — main Swing window, live demo loop, menu states, player movement, walk/swing animation states, ball physics, and moving clouds.
 - `src/PickleSmashCityMap.java` — walkable town map opened from PLAY; keeps the Home screen character and adds camera-follow movement, collisions, landmark prompts, and map debugging.
 - `src/TileMap.java` — separate 64 x 36 ground, road, sidewalk, and water layers using 32-pixel tiles.
-- `src/MapAssetRegistry.java` — named map asset keys and their paths inside the supplied map pack.
+- `src/MapAssetRegistry.java` — named map asset keys and their paths inside the supplied map pack, including flower and bush decorations for the editor.
+- `src/MapEditor.java` — visual map editor for placing, resizing, dragging, removing, and layering registry assets.
+- `src/MapLayoutStore.java` — saves and loads edited map props as `assets/map/map-layout.csv`.
 - `assets/map/` — supplied map pack. Keep its `Atlases/`, `Sprites/`, `Indexes/`, `References/`, and `Docs/` directories in this exact location; do not flatten or rename them.
 - `src/Main.java` — Pickle Smash application launcher; starts the home screen on Swing's event thread.
 - `src/AssetLoader.java` — image loading, sprite sheet slicing, transparency processing, and jersey tinting.
@@ -43,6 +45,32 @@ This is the current Home Screen development build. It keeps the menu visible whi
    ```bash
    java -cp bin Main
    ```
+
+## Map editor
+
+Launch the visual editor with:
+
+```bash
+java -cp bin Main --editor
+```
+
+In VS Code, select **Run Map Editor** from the Run and Debug configuration list.
+
+- Move the pointer to the desired spot on the map, select an asset in the left panel, then click **Add Asset**; the new asset appears centered at the last map pointer position.
+- Asset choices show thumbnails; selecting one displays a larger preview with its source dimensions before adding it.
+- The asset picker includes flower patches, flower planters, and multiple bush/hedge designs.
+- Drag the divider beside the asset panel to adjust its width, or click **Hide Assets** to expand the map view. Click **Show Assets** to restore the panel.
+- Hold **Ctrl** and scroll the mouse wheel over the map to zoom in or out around the pointer.
+- Drag an asset on the map to move it.
+- Selecting, moving, or resizing an asset preserves its layer. Change **Layer Y** explicitly to adjust its stacking order; overlapping clicks select the visually topmost asset.
+- Press **T** or click **Resize (T)**, then drag the selected asset's yellow bottom-right handle to resize it proportionally.
+- Use the arrow keys for 1-pixel nudges; hold SHIFT for 10-pixel nudges.
+- Press **Ctrl+Z** or click **Undo (Ctrl+Z)** to reverse the last map edit.
+- Use Delete or Backspace to remove the selected asset.
+- Edit X, Y, layer Y, and blocking status in the properties panel. Width and height fields remain available for exact sizing.
+- Click **Save** to write `assets/map/map-layout.csv`.
+- If the city map is already open, it refreshes saved placements automatically. Otherwise, open the city map after saving.
+- Use **Export PNG** to save a full-size map preview.
 
 ## Controls
 

@@ -39,6 +39,9 @@ public class PickleSmashCityMap extends JPanel implements Runnable, KeyListener,
     private BufferedImage worldBaseCache;
     private final TileMap tileMap = new TileMap();
     private final MapAssetRegistry mapAssets;
+    private long mapLayoutModified = Long.MIN_VALUE;
+    private long mapLayoutLength = -1;
+    private long lastMapLayoutCheck;
     private BufferedImage basePlayerIdleSprite;
     private BufferedImage playerIdleSprite;
     private BufferedImage[] basePlayerWalkSprites;
@@ -416,6 +419,52 @@ public class PickleSmashCityMap extends JPanel implements Runnable, KeyListener,
         addTreeProp(560, 918, "tree_large", 77, 112);
         addTreeProp(1170, 920, "tree_large", 76, 110);
         addTreeProp(1815, 980, "palm_tree", 72, 98);
+        applyMapLayoutOverride();
+    }
+
+    private void applyMapLayoutOverride() {
+        java.util.List<MapLayoutStore.Entry> layout = MapLayoutStore.load();
+        if (layout == null) {
+            return;
+        }
+
+        depthSortedProps.clear();
+        solidColliders.clear();
+        for (MapLayoutStore.Entry entry : layout) {
+            if (entry.blocking) {
+                addSolidBox(entry.x, entry.y, entry.width, entry.height);
+            }
+            final MapLayoutStore.Entry prop = entry;
+            depthSortedProps.add(new WorldProp(
+                prop.sortY,
+                (g, time) -> {
+                    BufferedImage sprite = mapAssets.get(prop.assetKey);
+                    g.drawImage(sprite, prop.x, prop.y, prop.width, prop.height, null);
+                }
+            ));
+        }
+        java.io.File layoutFile = MapLayoutStore.getLayoutFile();
+        mapLayoutModified = layoutFile.isFile() ? layoutFile.lastModified() : Long.MIN_VALUE;
+        mapLayoutLength = layoutFile.isFile() ? layoutFile.length() : -1;
+        repaint();
+    }
+
+    private void checkForMapLayoutChanges(long now) {
+        if (now - lastMapLayoutCheck < 500_000_000L) {
+            return;
+        }
+        lastMapLayoutCheck = now;
+        java.io.File layoutFile = MapLayoutStore.getLayoutFile();
+        long modified = layoutFile.isFile() ? layoutFile.lastModified() : Long.MIN_VALUE;
+        long length = layoutFile.isFile() ? layoutFile.length() : -1;
+        if (modified == mapLayoutModified && length == mapLayoutLength) {
+            return;
+        }
+        mapLayoutModified = modified;
+        mapLayoutLength = length;
+        if (modified != Long.MIN_VALUE) {
+            SwingUtilities.invokeLater(this::applyMapLayoutOverride);
+        }
     }
 
 
@@ -570,6 +619,7 @@ public class PickleSmashCityMap extends JPanel implements Runnable, KeyListener,
             double dt = Math.min(0.05, (now - lastTime) / 1_000_000_000.0);
             lastTime = now;
 
+            checkForMapLayoutChanges(now);
             update(dt);
             repaint();
 

@@ -8,6 +8,14 @@
       "mainClass": "Main",
       "cwd": "${workspaceFolder}",
       "console": "internalConsole"
+    },
+    {
+      "type": "java",
+      "name": "Run Map Editor",
+      "request": "launch",
+      "mainClass": "MapEditor",
+      "cwd": "${workspaceFolder}",
+      "console": "internalConsole"
     }
   ]
 }
