@@ -14,7 +14,7 @@ public final class MapAssetRegistry {
         paths.put("training_building", "Sprites/Atlas_01/A01_Sprite_004.png");
         paths.put("barangay_hall", "Sprites/Atlas_01/A01_Sprite_001.png");
         paths.put("city_level_complex", "Sprites/Atlas_01/A01_Sprite_003.png");
-        paths.put("provincial_pavilion", "Sprites/Atlas_01/A01_Sprite_011.png");
+        paths.put("provincial_pavilion", "provincial_government_hall.png");
         paths.put("sari_sari_shop", "Sprites/Atlas_01/A01_Sprite_007.png");
         paths.put("fountain", "Sprites/Atlas_01/A01_Sprite_008.png");
         paths.put("church", "Sprites/Atlas_03/A03_Sprite_005.png");
@@ -59,7 +59,9 @@ public final class MapAssetRegistry {
     public MapAssetRegistry() {
         Map<String, BufferedImage> loadedByPath = new LinkedHashMap<>();
         for (Map.Entry<String, String> entry : ASSET_PATHS.entrySet()) {
-            String resource = "map/" + entry.getValue();
+            String resource = "provincial_pavilion".equals(entry.getKey())
+                ? "provincial_government_hall"
+                : "map/" + entry.getValue();
             BufferedImage image = loadedByPath.get(resource);
             if (image == null) {
                 image = AssetLoader.loadImage(resource);
