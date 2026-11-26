@@ -61,6 +61,7 @@ In VS Code, select **Run Map Editor** from the Run and Debug configuration list.
 - The asset picker includes flower patches, flower planters, and multiple bush/hedge designs.
 - Drag the divider beside the asset panel to adjust its width, or click **Hide Assets** to expand the map view. Click **Show Assets** to restore the panel.
 - Hold **Ctrl** and scroll the mouse wheel over the map to zoom in or out around the pointer.
+- Hold **Space** and left-drag the map to pan around without moving assets.
 - Drag an asset on the map to move it.
 - Selecting, moving, or resizing an asset preserves its layer. Change **Layer Y** explicitly to adjust its stacking order; overlapping clicks select the visually topmost asset.
 - Press **T** or click **Resize (T)**, then drag the selected asset's yellow bottom-right handle to resize it proportionally.
