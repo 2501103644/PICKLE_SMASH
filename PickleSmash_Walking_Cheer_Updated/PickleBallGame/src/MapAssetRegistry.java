@@ -30,7 +30,6 @@ public final class MapAssetRegistry {
         paths.put("road_vertical", "Sprites/Atlas_02/A02_Sprite_017.png");
         paths.put("road_corner", "Sprites/Atlas_02/A02_Sprite_018.png");
         paths.put("road_intersection", "Sprites/Atlas_02/A02_Sprite_024.png");
-        paths.put("crosswalk", "Sprites/Atlas_01/A01_Sprite_035.png");
         paths.put("grass_tile", "Sprites/Atlas_02/A02_Sprite_001.png");
         paths.put("grass_tile_alt", "Sprites/Atlas_02/A02_Sprite_009.png");
         paths.put("sidewalk_tile", "Sprites/Atlas_02/A02_Sprite_004.png");

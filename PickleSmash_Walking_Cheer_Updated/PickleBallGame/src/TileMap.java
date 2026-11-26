@@ -22,7 +22,6 @@ public final class TileMap {
     private final boolean[][] bridge = new boolean[ROWS][COLUMNS];
     private final List<int[]> horizontalRoads = new ArrayList<>();
     private final List<int[]> verticalRoads = new ArrayList<>();
-    private final List<int[]> crosswalks = new ArrayList<>();
 
     public TileMap() {
         buildGroundLayer();
@@ -58,7 +57,6 @@ public final class TileMap {
 
         drawSidewalks(g, pavement);
         drawRoads(g);
-        drawCrosswalks(g, assets.get("crosswalk"));
         drawBridgeApproaches(g);
     }
 
@@ -121,18 +119,6 @@ public final class TileMap {
         addVerticalRoad(39, 3, 34);
         addVerticalRoad(59, 3, 34);
 
-        addCrosswalk(4, 10);
-        addCrosswalk(21, 10);
-        addCrosswalk(39, 10);
-        addCrosswalk(59, 10);
-        addCrosswalk(4, 20);
-        addCrosswalk(21, 20);
-        addCrosswalk(39, 20);
-        addCrosswalk(59, 20);
-        addCrosswalk(4, 33);
-        addCrosswalk(21, 33);
-        addCrosswalk(39, 33);
-        addCrosswalk(59, 33);
     }
 
     private void buildRiverLayer() {
@@ -160,10 +146,6 @@ public final class TileMap {
             setRoad(centerColumn - 1, row);
             setRoad(centerColumn, row);
         }
-    }
-
-    private void addCrosswalk(int column, int row) {
-        crosswalks.add(new int[]{column, row});
     }
 
     private void setRoad(int column, int row) {
@@ -241,14 +223,6 @@ public final class TileMap {
         for (int[] road : verticalRoads) {
             int x = (road[0] * TILE_SIZE) + TILE_SIZE / 2;
             g.drawLine(x, road[1] * TILE_SIZE, x, (road[2] + 1) * TILE_SIZE);
-        }
-    }
-
-    private void drawCrosswalks(Graphics2D g, BufferedImage crosswalk) {
-        for (int[] crossing : crosswalks) {
-            int x = crossing[0] * TILE_SIZE;
-            int y = crossing[1] * TILE_SIZE;
-            g.drawImage(crosswalk, x - 36, y + 3, 72, 26, null);
         }
     }
 
