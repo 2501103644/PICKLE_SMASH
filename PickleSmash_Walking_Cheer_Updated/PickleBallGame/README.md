@@ -63,6 +63,7 @@ In VS Code, select **Run Map Editor** from the Run and Debug configuration list.
 - Hold **Ctrl** and scroll the mouse wheel over the map to zoom in or out around the pointer.
 - Hold **Space** and left-drag the map to pan around without moving assets.
 - Drag an asset on the map to move it.
+- Select an asset and press **R** or click **Rotate (R)** to rotate it 90 degrees clockwise; rotation is saved with the map layout.
 - Selecting, moving, or resizing an asset preserves its layer. Change **Layer Y** explicitly to adjust its stacking order; overlapping clicks select the visually topmost asset.
 - Press **T** or click **Resize (T)**, then drag the selected asset's yellow bottom-right handle to resize it proportionally.
 - Use the arrow keys for 1-pixel nudges; hold SHIFT for 10-pixel nudges.

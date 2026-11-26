@@ -1,6 +1,7 @@
 {
   "java.project.sourcePaths": [
-    "PickleSmash_Walking_Cheer_Updated/PickleBallGame/src"
+    "PickleSmash_Walking_Cheer_Updated/PickleBallGame/src",
+    "PICKLE_SMASH/PickleSmash_Walking_Cheer_Updated/PickleBallGame/src"
   ],
   "java.project.outputPath": "PickleSmash_Walking_Cheer_Updated/PickleBallGame/bin"
 }

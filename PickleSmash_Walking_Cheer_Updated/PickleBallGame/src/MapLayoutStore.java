@@ -23,8 +23,14 @@ public final class MapLayoutStore {
         public int height;
         public int sortY;
         public boolean blocking;
+        public int rotationDegrees;
 
         public Entry(String assetKey, int x, int y, int width, int height, int sortY, boolean blocking) {
+            this(assetKey, x, y, width, height, sortY, blocking, 0);
+        }
+
+        public Entry(String assetKey, int x, int y, int width, int height, int sortY,
+                boolean blocking, int rotationDegrees) {
             this.assetKey = assetKey;
             this.x = x;
             this.y = y;
@@ -32,6 +38,7 @@ public final class MapLayoutStore {
             this.height = height;
             this.sortY = sortY;
             this.blocking = blocking;
+            this.rotationDegrees = ((rotationDegrees % 360) + 360) % 360;
         }
     }
 
@@ -79,7 +86,8 @@ public final class MapLayoutStore {
                         values[0],
                         parseInt(values[1]), parseInt(values[2]),
                         parseInt(values[3]), parseInt(values[4]),
-                        parseInt(values[5]), Boolean.parseBoolean(values[6])
+                        parseInt(values[5]), Boolean.parseBoolean(values[6]),
+                        values.length >= 8 ? parseInt(values[7]) : 0
                     ));
                 }
             }
@@ -99,7 +107,7 @@ public final class MapLayoutStore {
         File temporaryFile = File.createTempFile(FILE_NAME, ".tmp", parent);
         try {
             try (BufferedWriter writer = Files.newBufferedWriter(temporaryFile.toPath(), StandardCharsets.UTF_8)) {
-                writer.write("# assetKey,x,y,width,height,sortY,blocking\n");
+                writer.write("# assetKey,x,y,width,height,sortY,blocking,rotationDegrees\n");
                 for (Entry entry : entries) {
                     writer.write(String.join(",",
                         csv(entry.assetKey),
@@ -108,7 +116,8 @@ public final class MapLayoutStore {
                         Integer.toString(entry.width),
                         Integer.toString(entry.height),
                         Integer.toString(entry.sortY),
-                        Boolean.toString(entry.blocking)));
+                        Boolean.toString(entry.blocking),
+                        Integer.toString(entry.rotationDegrees)));
                     writer.newLine();
                 }
             }
