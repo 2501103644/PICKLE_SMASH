@@ -1,0 +1,244 @@
+{
+  "project": "Pickle Smash - 16-bit Town Map Reference",
+  "coordinate_system": {
+    "tile_size_px": 32,
+    "map_columns": 64,
+    "map_rows": 36,
+    "world_size_px": [
+      2048,
+      1152
+    ],
+    "origin": "top-left"
+  },
+  "camera": {
+    "type": "follow_player",
+    "keep_player_near_screen_center": true,
+    "clamp_to_map_edges": true
+  },
+  "style": {
+    "view": "top-down/isometric-lite illustrated pixel art",
+    "palette": "bright tropical greens, charcoal roads, tan sidewalks, vivid blue sports courts",
+    "outline": "dark crisp pixel outlines",
+    "scale": "buildings are larger decorative sprites; terrain and roads use repeating 32px tiles"
+  },
+  "road_plan": [
+    {
+      "kind": "horizontal_main_road",
+      "tile_y": 10,
+      "from_x": 0,
+      "to_x": 63,
+      "notes": "Connect west, center and east districts; add crosswalks at major vertical roads."
+    },
+    {
+      "kind": "horizontal_main_road",
+      "tile_y": 20,
+      "from_x": 0,
+      "to_x": 63,
+      "notes": "Runs below the market, fountain plaza and city hall."
+    },
+    {
+      "kind": "horizontal_south_road",
+      "tile_y": 33,
+      "from_x": 0,
+      "to_x": 59,
+      "notes": "Runs along the bottom edge of the residential/farm/sports districts."
+    },
+    {
+      "kind": "vertical_road",
+      "tile_x": 4,
+      "from_y": 2,
+      "to_y": 34,
+      "notes": "Western road beside the residential blocks."
+    },
+    {
+      "kind": "vertical_road",
+      "tile_x": 21,
+      "from_y": 2,
+      "to_y": 34,
+      "notes": "Separates central market/plaza from west districts."
+    },
+    {
+      "kind": "vertical_road",
+      "tile_x": 39,
+      "from_y": 2,
+      "to_y": 33,
+      "notes": "Separates fountain/market from city and provincial zones."
+    },
+    {
+      "kind": "vertical_road",
+      "tile_x": 59,
+      "from_y": 2,
+      "to_y": 34,
+      "notes": "Eastern connector near the river and waterfall."
+    }
+  ],
+  "districts": [
+    {
+      "name": "Training Campus",
+      "approx_tile_bounds": [
+        2,
+        1,
+        17,
+        8
+      ],
+      "landmark": "blue-roof training building with a pickleball court",
+      "props": [
+        "fence",
+        "trees",
+        "lamps",
+        "shrubs"
+      ]
+    },
+    {
+      "name": "Barangay Level",
+      "approx_tile_bounds": [
+        23,
+        1,
+        15,
+        9
+      ],
+      "landmark": "barangay hall with Philippine flag and small practice court",
+      "props": [
+        "houses",
+        "shrubs",
+        "trees",
+        "fence"
+      ]
+    },
+    {
+      "name": "North Residential Strip",
+      "approx_tile_bounds": [
+        42,
+        1,
+        21,
+        8
+      ],
+      "landmark": "colorful houses and small office buildings",
+      "props": [
+        "trees",
+        "street_lamps",
+        "hedges"
+      ]
+    },
+    {
+      "name": "Market and Sari-Sari",
+      "approx_tile_bounds": [
+        2,
+        12,
+        18,
+        7
+      ],
+      "landmark": "sari-sari store with houses around it",
+      "props": [
+        "awning",
+        "street_lamps",
+        "trees",
+        "fences"
+      ]
+    },
+    {
+      "name": "Central Fountain Plaza",
+      "approx_tile_bounds": [
+        23,
+        12,
+        11,
+        8
+      ],
+      "landmark": "round fountain in a paved square",
+      "props": [
+        "benches",
+        "lamps",
+        "hedges",
+        "trees"
+      ]
+    },
+    {
+      "name": "City Level",
+      "approx_tile_bounds": [
+        37,
+        11,
+        24,
+        10
+      ],
+      "landmark": "large modern blue sports complex with pickleball emblem",
+      "props": [
+        "office_towers",
+        "trees",
+        "fence",
+        "lamps"
+      ]
+    },
+    {
+      "name": "Southwest Homes",
+      "approx_tile_bounds": [
+        0,
+        21,
+        13,
+        12
+      ],
+      "landmark": "cluster of small homes with gardens",
+      "props": [
+        "palm_trees",
+        "fences",
+        "shrubs"
+      ]
+    },
+    {
+      "name": "Church and Farm",
+      "approx_tile_bounds": [
+        14,
+        21,
+        18,
+        12
+      ],
+      "landmark": "church, small wooden home, vegetable rows and dirt paths",
+      "props": [
+        "crop_rows",
+        "fences",
+        "trees",
+        "path_tiles"
+      ]
+    },
+    {
+      "name": "Provincial Level",
+      "approx_tile_bounds": [
+        32,
+        22,
+        26,
+        11
+      ],
+      "landmark": "large open-sided teal-roof sports pavilion and blue court",
+      "props": [
+        "benches",
+        "hedges",
+        "water_tower",
+        "windmill",
+        "cows",
+        "fence"
+      ]
+    },
+    {
+      "name": "River and Waterfall",
+      "approx_tile_bounds": [
+        60,
+        20,
+        4,
+        15
+      ],
+      "landmark": "blue river, rocky bank, waterfall and wooden bridge",
+      "props": [
+        "water_tiles",
+        "rocks",
+        "bridge"
+      ]
+    }
+  ],
+  "implementation_notes": [
+    "Treat the map as a tile map, not one flattened background image, so the player can walk through it and the camera can follow.",
+    "Use the generated map reference image as the visual layout target; use the atlases and extracted sprites as the actual drawing assets.",
+    "Build large buildings as foreground/decorative sprites with collision rectangles around walls; do not use the entire sprite rectangle as a solid collision area if it blocks walkways.",
+    "Keep roads and sidewalks passable. Add collision only to buildings, fences, water, rocks, trees and other obstacles.",
+    "Use nearest-neighbor scaling when resizing pixel-art sprites to keep edges crisp.",
+    "Some extracted crops contain multiple touching props as one grouped sprite; check the numbered index pages and use the original atlases for context."
+  ]
+}
