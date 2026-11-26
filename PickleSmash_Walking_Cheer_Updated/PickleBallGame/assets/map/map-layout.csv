@@ -5,9 +5,9 @@ house_red_roof,1288,104,122,180,277,true
 house_blue_roof,1568,128,122,150,263,true
 office_tower,1392,128,112,150,255,true
 house_red_roof,1488,112,105,170,271,true
-sari_sari_shop,180,423,156,154,577,true
-house_red_roof,357,418,110,164,582,true
-house_blue_roof,493,434,112,138,572,true
+sari_sari_shop,184,384,156,154,577,true
+house_red_roof,344,384,110,164,582,true
+house_blue_roof,464,408,112,138,572,true
 street_sign,292,515,38,42,557,false
 fountain,864,352,224,278,560,false
 bench,792,568,62,32,574,false
@@ -15,7 +15,7 @@ city_level_complex,1512,376,200,178,800,false
 office_tower,1880,536,104,170,548,true
 house_red_roof,180,704,122,180,884,true
 house_blue_roof,285,735,122,150,885,true
-house_red_roof,468,710,122,180,890,true
+house_red_roof,400,712,122,180,890,true
 palm_tree,1144,520,100,100,620,false
 church,730,692,172,189,881,true
 wooden_house,1000,716,179,155,871,true
@@ -24,7 +24,7 @@ provincial_pavilion,1328,704,485,209,933,true
 bench,1352,912,66,34,976,false
 street_lamp,1888,784,22,72,884,false
 tree_large,1083,447,74,108,555,true
-tree_large,521,806,77,112,918,true
+tree_large,576,928,77,112,918,true
 tree_large,1132,810,76,110,920,true
 palm_tree,1776,856,72,98,980,true
 grass_tile,1168,536,49,82,618,false
@@ -224,3 +224,14 @@ grass_tile_alt,1296,392,198,200,714,false
 grass_tile_alt,1456,392,198,200,730,false
 grass_tile_alt,1592,392,198,200,746,false
 grass_tile_alt,1656,392,198,200,762,false
+sari_sari_shop,176,880,156,154,405,false
+grass_tile_alt,560,952,87,88,796,false
+grass_tile_alt,560,880,87,88,812,false
+grass_tile,560,808,87,88,665,false
+grass_tile,560,736,87,88,681,false
+grass_tile_alt,560,688,87,88,812,false
+grass_tile,488,952,87,88,713,false
+grass_tile,488,880,87,88,729,false
+grass_tile,496,808,87,88,745,false
+grass_tile,496,752,87,88,761,false
+grass_tile,504,688,87,88,777,false
