@@ -1,0 +1,11 @@
+{
+  "atlas_count": 3,
+  "extracted_sprite_count": 477,
+  "sprites_by_atlas": {
+    "Atlas_01": 163,
+    "Atlas_02": 146,
+    "Atlas_03": 168
+  },
+  "reference_images": 3,
+  "notes": "Auto-isolated connected regions. Consult atlas index images for names/visual selection."
+}
