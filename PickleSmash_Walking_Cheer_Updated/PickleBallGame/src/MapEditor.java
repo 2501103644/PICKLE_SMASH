@@ -144,6 +144,7 @@ public class MapEditor extends JFrame {
         JButton resetButton = new JButton("Reset");
         JButton exportButton = new JButton("Export PNG");
         resizeButton = new JButton();
+        JButton rotateButton = new JButton("Rotate (R)");
         undoButton = new JButton("Undo (Ctrl+Z)");
         toggleAssetsButton = new JButton("Hide Assets");
         toolbar.add(saveButton);
@@ -152,6 +153,7 @@ public class MapEditor extends JFrame {
         toolbar.add(duplicateButton);
         toolbar.add(resetButton);
         toolbar.add(resizeButton);
+        toolbar.add(rotateButton);
         toolbar.add(undoButton);
         toolbar.add(exportButton);
         toolbar.add(toggleAssetsButton);
@@ -207,6 +209,14 @@ public class MapEditor extends JFrame {
                 assetSidebarWidth = editorSplit.getDividerLocation();
             }
         });
+        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+            .put(KeyStroke.getKeyStroke(KeyEvent.VK_R, 0), "rotate-map-asset");
+        getRootPane().getActionMap().put("rotate-map-asset", new AbstractAction() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent event) {
+                rotateSelectedAsset();
+            }
+        });
 
         saveButton.addActionListener(e -> saveLayout());
         addButton.addActionListener(e -> addAsset());
@@ -214,6 +224,7 @@ public class MapEditor extends JFrame {
         duplicateButton.addActionListener(e -> duplicateSelected());
         resetButton.addActionListener(e -> resetLayout());
         resizeButton.addActionListener(e -> setResizeMode(!resizeMode));
+        rotateButton.addActionListener(e -> rotateSelectedAsset());
         undoButton.addActionListener(e -> undo());
         exportButton.addActionListener(e -> exportPng());
         toggleAssetsButton.addActionListener(e -> toggleAssetSidebar());
@@ -266,7 +277,7 @@ public class MapEditor extends JFrame {
                         && hitResizeHandle(entries.get(selectedIndex), worldPoint)) {
                     MapLayoutStore.Entry entry = entries.get(selectedIndex);
                     resizingSelected = true;
-                    resizeStart = worldPoint;
+                    resizeStart = toAssetLocalPoint(entry, worldPoint);
                     resizeStartWidth = entry.width;
                     resizeStartHeight = entry.height;
                     dragOffset = null;
@@ -306,7 +317,7 @@ public class MapEditor extends JFrame {
                 Point worldPoint = canvas.toWorldPoint(event.getPoint());
                 rememberCanvasPosition(worldPoint);
                 if (resizingSelected && selectedIndex >= 0 && resizeStart != null) {
-                    resizeSelectedAsset(worldPoint);
+                    resizeSelectedAsset(toAssetLocalPoint(entries.get(selectedIndex), worldPoint));
                     return;
                 }
                 if (selectedIndex < 0 || dragOffset == null) return;
@@ -424,7 +435,7 @@ public class MapEditor extends JFrame {
         for (MapLayoutStore.Entry entry : source) {
             copies.add(new MapLayoutStore.Entry(
                 entry.assetKey, entry.x, entry.y, entry.width, entry.height,
-                entry.sortY, entry.blocking
+                entry.sortY, entry.blocking, entry.rotationDegrees
             ));
         }
         return copies;
@@ -446,13 +457,34 @@ public class MapEditor extends JFrame {
     }
 
     private boolean hitResizeHandle(MapLayoutStore.Entry entry, Point point) {
+        Point localPoint = toAssetLocalPoint(entry, point);
         int halfSize = RESIZE_HANDLE_SIZE / 2;
         return new Rectangle(
             entry.x + entry.width - halfSize,
             entry.y + entry.height - halfSize,
             RESIZE_HANDLE_SIZE,
             RESIZE_HANDLE_SIZE
-        ).contains(point);
+        ).contains(localPoint);
+    }
+
+    private Point toAssetLocalPoint(MapLayoutStore.Entry entry, Point point) {
+        double centerX = entry.x + entry.width / 2.0;
+        double centerY = entry.y + entry.height / 2.0;
+        double radians = Math.toRadians(-entry.rotationDegrees);
+        double dx = point.x - centerX;
+        double dy = point.y - centerY;
+        return new Point(
+            (int) Math.round(centerX + dx * Math.cos(radians) - dy * Math.sin(radians)),
+            (int) Math.round(centerY + dx * Math.sin(radians) + dy * Math.cos(radians))
+        );
+    }
+
+    private void rotateSelectedAsset() {
+        if (selectedIndex < 0 || selectedIndex >= entries.size()) return;
+        pushUndoState();
+        MapLayoutStore.Entry entry = entries.get(selectedIndex);
+        entry.rotationDegrees = (entry.rotationDegrees + 90) % 360;
+        canvas.repaint();
     }
 
     private void resizeSelectedAsset(Point point) {
@@ -520,7 +552,8 @@ public class MapEditor extends JFrame {
         List<MapLayoutStore.Entry> ordered = getDrawOrder();
         for (int i = ordered.size() - 1; i >= 0; i--) {
             MapLayoutStore.Entry entry = ordered.get(i);
-            if (new Rectangle(entry.x, entry.y, entry.width, entry.height).contains(screenX, screenY)) {
+            Point localPoint = toAssetLocalPoint(entry, new Point(screenX, screenY));
+            if (new Rectangle(entry.x, entry.y, entry.width, entry.height).contains(localPoint)) {
                 return entries.indexOf(entry);
             }
         }
@@ -606,7 +639,7 @@ public class MapEditor extends JFrame {
         MapLayoutStore.Entry source = entries.get(selectedIndex);
         MapLayoutStore.Entry copy = new MapLayoutStore.Entry(
             source.assetKey, source.x + 16, source.y + 16, source.width,
-            source.height, source.sortY + 16, source.blocking
+            source.height, source.sortY + 16, source.blocking, source.rotationDegrees
         );
         pushUndoState();
         entries.add(copy);
@@ -667,22 +700,25 @@ public class MapEditor extends JFrame {
         for (int i = 0; i < ordered.size(); i++) {
             MapLayoutStore.Entry entry = ordered.get(i);
             BufferedImage image = assets.get(entry.assetKey);
-            g.drawImage(image, entry.x, entry.y, entry.width, entry.height, null);
+            Graphics2D assetGraphics = (Graphics2D) g.create();
+            assetGraphics.rotate(Math.toRadians(entry.rotationDegrees),
+                entry.x + entry.width / 2.0, entry.y + entry.height / 2.0);
+            assetGraphics.drawImage(image, entry.x, entry.y, entry.width, entry.height, null);
             int originalIndex = entries.indexOf(entry);
             if (originalIndex == selectedIndex) {
-                g.setColor(new Color(250, 204, 21));
-                g.setStroke(new java.awt.BasicStroke(3f));
-                g.drawRect(entry.x, entry.y, entry.width, entry.height);
+                assetGraphics.setColor(new Color(250, 204, 21));
+                assetGraphics.setStroke(new java.awt.BasicStroke(3f));
+                assetGraphics.drawRect(entry.x, entry.y, entry.width, entry.height);
                 if (resizeMode) {
                     int handleSize = RESIZE_HANDLE_SIZE;
-                    g.fillRect(
+                    assetGraphics.fillRect(
                         entry.x + entry.width - handleSize / 2,
                         entry.y + entry.height - handleSize / 2,
                         handleSize,
                         handleSize
                     );
-                    g.setColor(Color.BLACK);
-                    g.drawRect(
+                    assetGraphics.setColor(Color.BLACK);
+                    assetGraphics.drawRect(
                         entry.x + entry.width - handleSize / 2,
                         entry.y + entry.height - handleSize / 2,
                         handleSize,
@@ -690,6 +726,7 @@ public class MapEditor extends JFrame {
                     );
                 }
             }
+            assetGraphics.dispose();
         }
         g.setColor(new Color(255, 255, 255, 90));
         for (int x = 0; x <= WORLD_WIDTH; x += TileMap.TILE_SIZE) g.drawLine(x, 0, x, WORLD_HEIGHT);

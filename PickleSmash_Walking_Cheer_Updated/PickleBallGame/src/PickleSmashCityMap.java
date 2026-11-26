@@ -432,14 +432,26 @@ public class PickleSmashCityMap extends JPanel implements Runnable, KeyListener,
         solidColliders.clear();
         for (MapLayoutStore.Entry entry : layout) {
             if (entry.blocking) {
-                addSolidBox(entry.x, entry.y, entry.width, entry.height);
+                double radians = Math.toRadians(entry.rotationDegrees);
+                double colliderWidth = Math.abs(entry.width * Math.cos(radians))
+                    + Math.abs(entry.height * Math.sin(radians));
+                double colliderHeight = Math.abs(entry.width * Math.sin(radians))
+                    + Math.abs(entry.height * Math.cos(radians));
+                double centerX = entry.x + entry.width / 2.0;
+                double centerY = entry.y + entry.height / 2.0;
+                addSolidBox(centerX - colliderWidth / 2.0, centerY - colliderHeight / 2.0,
+                    colliderWidth, colliderHeight);
             }
             final MapLayoutStore.Entry prop = entry;
             depthSortedProps.add(new WorldProp(
                 prop.sortY,
                 (g, time) -> {
                     BufferedImage sprite = mapAssets.get(prop.assetKey);
-                    g.drawImage(sprite, prop.x, prop.y, prop.width, prop.height, null);
+                    Graphics2D rotatedGraphics = (Graphics2D) g.create();
+                    rotatedGraphics.rotate(Math.toRadians(prop.rotationDegrees),
+                        prop.x + prop.width / 2.0, prop.y + prop.height / 2.0);
+                    rotatedGraphics.drawImage(sprite, prop.x, prop.y, prop.width, prop.height, null);
+                    rotatedGraphics.dispose();
                 }
             ));
         }
