@@ -1,5 +1,6 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -76,6 +77,7 @@ public class MapEditor extends JFrame {
     private int resizeStartHeight;
     private boolean resizeMode;
     private boolean resizingSelected;
+    private Point lastPanPoint;
     private boolean syncingProperties;
     private boolean gestureUndoRecorded;
     private JButton undoButton;
@@ -224,6 +226,22 @@ public class MapEditor extends JFrame {
                 undo();
             }
         });
+        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+            .put(KeyStroke.getKeyStroke("pressed SPACE"), "start-map-pan");
+        getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+            .put(KeyStroke.getKeyStroke("released SPACE"), "stop-map-pan");
+        getRootPane().getActionMap().put("start-map-pan", new AbstractAction() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent event) {
+                canvas.setPanMode(true);
+            }
+        });
+        getRootPane().getActionMap().put("stop-map-pan", new AbstractAction() {
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent event) {
+                canvas.setPanMode(false);
+            }
+        });
 
         wirePropertySpinners();
         assetList.addListSelectionListener(event -> {
@@ -236,6 +254,11 @@ public class MapEditor extends JFrame {
             @Override
             public void mousePressed(MouseEvent event) {
                 requestCanvasFocus();
+                if (canvas.isPanMode() && SwingUtilities.isLeftMouseButton(event)) {
+                    lastPanPoint = event.getPoint();
+                    canvas.setPanning(true);
+                    return;
+                }
                 Point worldPoint = canvas.toWorldPoint(event.getPoint());
                 rememberCanvasPosition(worldPoint);
                 gestureUndoRecorded = false;
@@ -263,6 +286,8 @@ public class MapEditor extends JFrame {
 
             @Override
             public void mouseReleased(MouseEvent event) {
+                lastPanPoint = null;
+                canvas.setPanning(false);
                 dragOffset = null;
                 resizeStart = null;
                 resizingSelected = false;
@@ -271,6 +296,13 @@ public class MapEditor extends JFrame {
         canvas.addMouseMotionListener(new MouseAdapter() {
             @Override
             public void mouseDragged(MouseEvent event) {
+                if (lastPanPoint != null) {
+                    Point current = event.getPoint();
+                    canvas.panBy(current.x - lastPanPoint.x, current.y - lastPanPoint.y);
+                    lastPanPoint = current;
+                    rememberCanvasPosition(canvas.toWorldPoint(current));
+                    return;
+                }
                 Point worldPoint = canvas.toWorldPoint(event.getPoint());
                 rememberCanvasPosition(worldPoint);
                 if (resizingSelected && selectedIndex >= 0 && resizeStart != null) {
@@ -668,6 +700,8 @@ public class MapEditor extends JFrame {
         private double zoom = 1.0;
         private double panX;
         private double panY;
+        private boolean panMode;
+        private boolean panning;
 
         MapCanvas() {
             setFocusable(true);
@@ -693,6 +727,32 @@ public class MapEditor extends JFrame {
             panX = screenPoint.x - (getWidth() - WORLD_WIDTH * scale) / 2.0 - worldPoint.x * scale;
             panY = screenPoint.y - (getHeight() - WORLD_HEIGHT * scale) / 2.0 - worldPoint.y * scale;
             repaint();
+        }
+
+        boolean isPanMode() {
+            return panMode;
+        }
+
+        void setPanMode(boolean panMode) {
+            this.panMode = panMode;
+            updatePanCursor();
+        }
+
+        void setPanning(boolean panning) {
+            this.panning = panning;
+            updatePanCursor();
+        }
+
+        void panBy(int deltaX, int deltaY) {
+            panX += deltaX;
+            panY += deltaY;
+            repaint();
+        }
+
+        private void updatePanCursor() {
+            setCursor(Cursor.getPredefinedCursor(
+                panning ? Cursor.MOVE_CURSOR : panMode ? Cursor.HAND_CURSOR : Cursor.DEFAULT_CURSOR
+            ));
         }
 
         Point toWorldPoint(Point point) {

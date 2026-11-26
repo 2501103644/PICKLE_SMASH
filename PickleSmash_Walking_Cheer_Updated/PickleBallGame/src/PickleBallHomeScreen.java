@@ -1001,9 +1001,8 @@ public class PickleBallHomeScreen extends JFrame {
                     int code = e.getKeyCode();
 
                     if (currentState == GameState.INTRO) {
-                        if (code == KeyEvent.VK_ENTER || code == KeyEvent.VK_SPACE) {
-                            currentState = GameState.GENDER;
-                        }
+                        currentState = GameState.GENDER;
+                        repaint();
                         return;
                     }
 
@@ -1182,9 +1181,12 @@ public class PickleBallHomeScreen extends JFrame {
             // PLAY simply resets the same entities and continues as the match.
             double step = Math.min(dt, 0.05);
             if (currentState != GameState.MAP) {
-                if (rallyBall != null) rallyBall.update(step);
-                if (leftPlayer != null) leftPlayer.update(step);
-                if (rightPlayer != null) rightPlayer.update(step);
+                if (rallyBall != null)
+                    rallyBall.update(step);
+                if (leftPlayer != null)
+                    leftPlayer.update(step);
+                if (rightPlayer != null)
+                    rightPlayer.update(step);
             }
 
             repaint();
@@ -1239,8 +1241,10 @@ public class PickleBallHomeScreen extends JFrame {
                 case INTRO -> drawIntroOverlay(g2);
                 case GENDER -> drawGenderOverlay(g2);
                 case HOME -> drawHomeMenu(g2);
-                case PLAYING -> { /* The court is unobstructed during the rally. */ }
-                case MAP -> { /* The city map is hosted directly in the game window. */ }
+                case PLAYING -> {
+                    /* The court is unobstructed during the rally. */ }
+                case MAP -> {
+                    /* The city map is hosted directly in the game window. */ }
                 case AVATAR -> drawAvatarOverlay(g2);
                 case CREDITS -> drawCreditsOverlay(g2);
             }
@@ -1442,12 +1446,28 @@ public class PickleBallHomeScreen extends JFrame {
         }
 
         private void drawIntroOverlay(Graphics2D g) {
-            drawModalFrame(g, "WELCOME TO PICKLESMASH", "CLICK ANYWHERE TO CONTINUE");
+            drawModalFrame(g, "", "CLICK ANYWHERE OR PRESS ANY KEY");
+            PixelFont.drawCentered(
+                    g,
+                    "WELCOME TO",
+                    VIRTUAL_WIDTH / 2,
+                    65,
+                    2,
+                    1,
+                    Palette.BALL_YELLOW);
+            PixelFont.drawCentered(
+                    g,
+                    "PICKLESMASH",
+                    VIRTUAL_WIDTH / 2,
+                    84,
+                    2,
+                    1,
+                    Palette.BALL_YELLOW);
             PixelFont.drawCentered(
                     g,
                     "GET READY TO PLAY",
                     VIRTUAL_WIDTH / 2,
-                    100,
+                    110,
                     1,
                     1,
                     Palette.TEXT_WHITE);
@@ -1524,6 +1544,11 @@ public class PickleBallHomeScreen extends JFrame {
         }
 
         private void drawModalFrame(Graphics2D g, String header, String prompt) {
+            drawModalFrame(g, header, prompt, 1, 1);
+        }
+
+        private void drawModalFrame(
+                Graphics2D g, String header, String prompt, int headerScale, int headerSpacing) {
             // y=52 (was 46) so the modal clears the subtitle banner, which
             // sits 3px lower now that the real logo is taller than the old font title.
             int x = 44, y = 52, w = VIRTUAL_WIDTH - 88, h = 112;
@@ -1534,7 +1559,14 @@ public class PickleBallHomeScreen extends JFrame {
             g.setColor(Palette.GOLD_TRIM);
             g.drawRect(x, y, w - 1, h - 1);
 
-            PixelFont.drawCentered(g, header, VIRTUAL_WIDTH / 2, y + 10, 1, 1, Palette.BALL_YELLOW);
+            PixelFont.drawCentered(
+                    g,
+                    header,
+                    VIRTUAL_WIDTH / 2,
+                    y + 10,
+                    headerScale,
+                    headerSpacing,
+                    Palette.BALL_YELLOW);
             PixelFont.drawCentered(g, prompt, VIRTUAL_WIDTH / 2, y + h - 14, 1, 1, Palette.TEXT_MUTED);
         }
     }

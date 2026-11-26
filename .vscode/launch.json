@@ -6,7 +6,7 @@
       "name": "Run Pickle Smash",
       "request": "launch",
       "mainClass": "Main",
-      "cwd": "${workspaceFolder}/PICKLE_SMASH/PickleSmash_Walking_Cheer_Updated/PickleBallGame",
+      "cwd": "${workspaceFolder}/PickleSmash_Walking_Cheer_Updated/PickleBallGame",
       "console": "internalConsole"
     },
     {
@@ -14,7 +14,7 @@
       "name": "Run Map Editor",
       "request": "launch",
       "mainClass": "MapEditor",
-      "cwd": "${workspaceFolder}/PICKLE_SMASH/PickleSmash_Walking_Cheer_Updated/PickleBallGame",
+      "cwd": "${workspaceFolder}/PickleSmash_Walking_Cheer_Updated/PickleBallGame",
       "console": "internalConsole"
     }
   ]
