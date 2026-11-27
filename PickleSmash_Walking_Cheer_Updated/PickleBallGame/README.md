@@ -58,7 +58,7 @@ In VS Code, select **Run Map Editor** from the Run and Debug configuration list.
 
 - Move the pointer to the desired spot on the map, select an asset in the left panel, then click **Add Asset**; the new asset appears centered at the last map pointer position.
 - Asset choices show thumbnails; selecting one displays a larger preview with its source dimensions before adding it.
-- The asset picker includes flower patches, flower planters, and multiple bush/hedge designs.
+- The asset picker includes fences, flower patches, flower planters, and multiple bush/hedge designs.
 - Drag the divider beside the asset panel to adjust its width, or click **Hide Assets** to expand the map view. Click **Show Assets** to restore the panel.
 - Hold **Ctrl** and scroll the mouse wheel over the map to zoom in or out around the pointer.
 - Hold **Space** and left-drag the map to pan around without moving assets.

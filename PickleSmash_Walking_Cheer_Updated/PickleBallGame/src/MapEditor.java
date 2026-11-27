@@ -585,7 +585,8 @@ public class MapEditor extends JFrame {
         int height = Math.min(180, Math.max(32, image.getHeight()));
         int x = Math.max(0, Math.min(WORLD_WIDTH - width, lastCanvasWorldPosition.x - width / 2));
         int y = Math.max(0, Math.min(WORLD_HEIGHT - height, lastCanvasWorldPosition.y - height / 2));
-        MapLayoutStore.Entry entry = new MapLayoutStore.Entry(key, x, y, width, height, y + height, false);
+        boolean blocking = "fence".equals(key);
+        MapLayoutStore.Entry entry = new MapLayoutStore.Entry(key, x, y, width, height, y + height, blocking);
         pushUndoState();
         entries.add(entry);
         selectedIndex = entries.size() - 1;
@@ -704,6 +705,10 @@ public class MapEditor extends JFrame {
             assetGraphics.rotate(Math.toRadians(entry.rotationDegrees),
                 entry.x + entry.width / 2.0, entry.y + entry.height / 2.0);
             assetGraphics.drawImage(image, entry.x, entry.y, entry.width, entry.height, null);
+            if ("fountain".equals(entry.assetKey)) {
+                drawFountainDownwardEffect(assetGraphics,
+                        entry.x, entry.y, entry.width, entry.height);
+            }
             int originalIndex = entries.indexOf(entry);
             if (originalIndex == selectedIndex) {
                 assetGraphics.setColor(new Color(250, 204, 21));
@@ -731,6 +736,47 @@ public class MapEditor extends JFrame {
         g.setColor(new Color(255, 255, 255, 90));
         for (int x = 0; x <= WORLD_WIDTH; x += TileMap.TILE_SIZE) g.drawLine(x, 0, x, WORLD_HEIGHT);
         for (int y = 0; y <= WORLD_HEIGHT; y += TileMap.TILE_SIZE) g.drawLine(0, y, WORLD_WIDTH, y);
+    }
+
+    private void drawFountainDownwardEffect(Graphics2D g, int x, int y, int width, int height) {
+        Graphics2D water = (Graphics2D) g.create();
+        water.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        double centerX = x + width * 0.50;
+        double topY = y + height * 0.39;
+        double basinY = y + height * 0.58;
+        double basinBottomY = y + height * 0.63;
+
+        water.setStroke(new java.awt.BasicStroke(Math.max(2f, (float) (width * 0.018f)),
+                java.awt.BasicStroke.CAP_ROUND, java.awt.BasicStroke.JOIN_ROUND));
+        water.setColor(new Color(125, 225, 255, 230));
+        water.drawLine((int) centerX, (int) topY, (int) centerX, (int) basinY);
+
+        double[] sideOffsets = {-0.13, 0.13, -0.08, 0.08};
+        for (int i = 0; i < sideOffsets.length; i++) {
+            double startX = centerX + width * sideOffsets[i] * 0.18;
+            double endX = centerX + width * sideOffsets[i];
+            double startY = topY + 4;
+            double endY = basinY - height * 0.04;
+            double arc = height * (0.018 + i * 0.002);
+
+            for (int step = 0; step <= 4; step++) {
+                double t = step / 4.0;
+                double dropletX = startX + (endX - startX) * t;
+                double dropletY = startY + (endY - startY) * t - Math.sin(t * Math.PI) * arc;
+                water.setColor(new Color(166, 236, 255, 210));
+                water.fillOval((int) (dropletX - 2.5), (int) (dropletY - 2.5), 5, 5);
+            }
+        }
+
+        water.setColor(new Color(210, 248, 255, 170));
+        water.setStroke(new java.awt.BasicStroke(2f));
+        int rippleWidth = (int) (width * 0.28);
+        int rippleHeight = (int) (height * 0.036);
+        water.drawOval((int) centerX - rippleWidth / 2,
+                (int) basinBottomY - rippleHeight / 2,
+                rippleWidth, rippleHeight);
+        water.dispose();
     }
 
     private class MapCanvas extends JPanel {

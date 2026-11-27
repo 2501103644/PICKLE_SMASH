@@ -16,16 +16,17 @@ import javax.swing.*;
  * Features:
  * - 64 x 36 world made from separate 32-pixel ground, road, and water layers
  * - Connected training, Barangay, residential, plaza, city, church, farm, and
- *   provincial districts using the supplied map asset pack
+ * provincial districts using the supplied map asset pack
  * - Walkable 4-directional Pickleball Athlete (WASD / Arrow Keys, Shift to Jog)
  * - Smooth Zoomed-In Follow Camera (Mouse Wheel or +/- to zoom, M for Full Map)
  * - Interactive Landmark Inspection ([E] or [SPACE]) and F12 PNG Export
  *
  * Compile & Run:
- *   See the project README for the full javac and Main launch commands.
+ * See the project README for the full javac and Main launch commands.
  * ============================================================================
  */
-public class PickleSmashCityMap extends JPanel implements Runnable, KeyListener, MouseWheelListener, MouseMotionListener, MouseListener {
+public class PickleSmashCityMap extends JPanel
+        implements Runnable, KeyListener, MouseWheelListener, MouseMotionListener, MouseListener {
 
     // ------------------------------------------------------------------------
     // 1. HD WORLD & VIEWPORT CONSTANTS (16:9 FULL HD ASPECT RATIO)
@@ -54,13 +55,15 @@ public class PickleSmashCityMap extends JPanel implements Runnable, KeyListener,
     private volatile boolean running = false;
     private double animTime = 0.0;
     private Runnable exitAction;
+    private final Rectangle backButtonBounds = new Rectangle(16, 16, 118, 46);
+    private boolean backButtonHovered = false;
 
     // ------------------------------------------------------------------------
     // 2. CAMERA STATE (SMOOTH ZOOM-IN & CHARACTER TRACKING)
     // ------------------------------------------------------------------------
-    private double camX = 520;
-    private double camY = 260;
-    private double camZoom = 1.75;        // Default zoomed-in close-up scale
+    private double camX = 620;
+    private double camY = 300;
+    private double camZoom = 1.75; // Default zoomed-in close-up scale
     private double targetZoom = 1.75;
     private double savedZoom = 1.75;
     private boolean fullMapOverview = false;
@@ -72,9 +75,9 @@ public class PickleSmashCityMap extends JPanel implements Runnable, KeyListener,
     // ------------------------------------------------------------------------
     // 3. WALKABLE CHARACTER STATE
     // ------------------------------------------------------------------------
-    private double playerX = 520;
-    private double playerY = 260;
-    private int playerDir = 0;            // 0=Down, 1=Up, 2=Left, 3=Right
+    private double playerX = 620;
+    private double playerY = 300;
+    private int playerDir = 0; // 0=Down, 1=Up, 2=Left, 3=Right
     private double walkAnimTimer = 0.0;
     private boolean isMoving = false;
     private boolean isJogging = false;
@@ -163,13 +166,6 @@ public class PickleSmashCityMap extends JPanel implements Runnable, KeyListener,
         camY = playerY;
     }
 
-
-
-
-
-
-
-
     private void loadPlayerSprites() {
         BufferedImage spriteSheet = AssetLoader.loadImage("spritesheet");
         if (spriteSheet == null) {
@@ -177,8 +173,7 @@ public class PickleSmashCityMap extends JPanel implements Runnable, KeyListener,
         }
 
         BufferedImage[][] spriteGrid = AssetLoader.extractSpriteGrid(
-            AssetLoader.stripWhiteBackground(spriteSheet, 22), 3, 3
-        );
+                AssetLoader.stripWhiteBackground(spriteSheet, 22), 3, 3);
         if (spriteGrid == null || spriteGrid[0][0] == null) {
             throw new IllegalStateException("Could not extract the Home screen idle character sprite.");
         }
@@ -209,9 +204,9 @@ public class PickleSmashCityMap extends JPanel implements Runnable, KeyListener,
 
     private BufferedImage[] createVerticalWalkSprites(Color jerseyColor, boolean facingAway) {
         BufferedImage[] frames = new BufferedImage[4];
-        int[] legSwing = {-4, 0, 4, 0};
-        int[] armSwing = {4, 0, -4, 0};
-        int[] bob = {0, -1, 0, -1};
+        int[] legSwing = { -4, 0, 4, 0 };
+        int[] armSwing = { 4, 0, -4, 0 };
+        int[] bob = { 0, -1, 0, -1 };
 
         for (int i = 0; i < frames.length; i++) {
             BufferedImage image = new BufferedImage(48, 96, BufferedImage.TYPE_INT_ARGB);
@@ -323,17 +318,16 @@ public class PickleSmashCityMap extends JPanel implements Runnable, KeyListener,
         addMapSpriteProp("training_building", 180, 58, 369, 171, 229);
         addBuildingCollision(292, 105, 150, 88, 52);
         landmarks.add(new Landmark(
-            "TRAINING CAMPUS", "TRAINING DISTRICT",
-            "The town's pickleball training campus.", 500, 268, 100
-        ));
+                "TRAINING CAMPUS", "TRAINING DISTRICT",
+                "The town's pickleball training campus.", 500, 268, 100));
 
         addMapSpriteProp("barangay_hall", 750, 58, 430, 193, 251);
         addBuildingCollision(827, 108, 274, 100, 56);
-        pinBanners.add(new PinBanner("BARANGAY LEVEL", 1160, 85));
+        pinBanners.add(new PinBanner("BARANGAY LEVEL", 985, 115));
+        addWavingFlagProp(782, 118, 74);
         landmarks.add(new Landmark(
-            "BARANGAY HALL", "BARANGAY LEVEL",
-            "The barangay hall and nearby homes.", 1070, 270, 100
-        ));
+                "BARANGAY HALL", "BARANGAY LEVEL",
+                "The barangay hall and nearby homes.", 1070, 270, 100));
 
         addMapSpriteProp("house_red_roof", 1325, 97, 122, 180, 277);
         addBuildingCollision(1350, 199, 72, 64, 34);
@@ -343,7 +337,7 @@ public class PickleSmashCityMap extends JPanel implements Runnable, KeyListener,
         addBuildingCollision(1645, 190, 62, 52, 30);
         addMapSpriteProp("house_red_roof", 1740, 116, 105, 155, 271);
         addBuildingCollision(1762, 205, 59, 49, 30);
-        pinBanners.add(new PinBanner("RESIDENTIAL STRIP", 1597, 77));
+        pinBanners.add(new PinBanner("RESIDENTIAL STRIP", 1560, 115));
 
         addMapSpriteProp("sari_sari_shop", 180, 423, 156, 154, 577);
         addBuildingCollision(215, 487, 86, 74, 34);
@@ -352,32 +346,29 @@ public class PickleSmashCityMap extends JPanel implements Runnable, KeyListener,
         addMapSpriteProp("house_blue_roof", 493, 434, 112, 138, 572);
         addBuildingCollision(516, 505, 66, 52, 32);
         addMapSpriteProp("street_sign", 292, 515, 38, 42, 557);
-        pinBanners.add(new PinBanner("MARKET & SARI-SARI", 342, 376));
+        pinBanners.add(new PinBanner("SARI-SARI STORE", 425, 385));
         landmarks.add(new Landmark(
-            "SARI-SARI SHOP", "MARKET DISTRICT",
-            "A neighborhood stop for snacks and refreshments between pickleball matches.", 293, 558, 96
-        ));
+                "SARI-SARI SHOP", "MARKET DISTRICT",
+                "A neighborhood stop for snacks and refreshments between pickleball matches.", 293, 558, 96));
 
-        addMapSpriteProp("fountain", 745, 342, 246, 252, 594);
+        addFountainProp(745, 342, 246, 252, 594);
         addSolidBox(850, 444, 38, 38);
         addMapSpriteProp("bench", 770, 542, 62, 32, 574);
         addMapSpriteProp("bench", 904, 542, 62, 32, 574);
         addMapSpriteProp("street_lamp", 728, 410, 22, 72, 482);
         addMapSpriteProp("street_lamp", 981, 410, 22, 72, 482);
-        pinBanners.add(new PinBanner("FOUNTAIN PLAZA", 868, 334));
+        pinBanners.add(new PinBanner("FOUNTAIN PLAZA", 975, 385));
         landmarks.add(new Landmark(
-            "CENTRAL FOUNTAIN PLAZA", "TOWN SQUARE",
-            "A paved town square linking the neighborhoods and the main road network.", 880, 580, 112
-        ));
+                "CENTRAL FOUNTAIN PLAZA", "TOWN SQUARE",
+                "A paved town square linking the neighborhoods and the main road network.", 880, 580, 112));
 
         addMapSpriteProp("city_level_complex", 1325, 340, 365, 236, 576);
         addMapSpriteProp("office_tower", 1710, 378, 104, 170, 548);
         addBuildingCollision(1375, 423, 250, 104, 66);
         addBuildingCollision(1731, 465, 57, 57, 30);
         landmarks.add(new Landmark(
-            "CITY SPORTS COMPLEX", "CITY LEVEL",
-            "The modern sports district, connected to the rest of town by paved streets.", 1640, 572, 112
-        ));
+                "CITY SPORTS COMPLEX", "CITY LEVEL",
+                "The modern sports district, connected to the rest of town by paved streets.", 1640, 572, 112));
 
         addMapSpriteProp("house_red_roof", 180, 704, 122, 180, 884);
         addBuildingCollision(207, 808, 68, 61, 34);
@@ -386,34 +377,32 @@ public class PickleSmashCityMap extends JPanel implements Runnable, KeyListener,
         addMapSpriteProp("house_red_roof", 468, 710, 122, 180, 890);
         addBuildingCollision(495, 814, 68, 61, 34);
         addMapSpriteProp("palm_tree", 558, 780, 74, 101, 881);
-        pinBanners.add(new PinBanner("RESIDENTIAL HOMES", 320, 676));
+        pinBanners.add(new PinBanner("RESIDENTIAL HOMES", 425, 700));
 
         addMapSpriteProp("church", 730, 692, 172, 189, 881);
         addBuildingCollision(782, 773, 70, 90, 38);
         addMapSpriteProp("wooden_house", 1000, 716, 179, 155, 871);
         addBuildingCollision(1040, 788, 95, 62, 42);
         addMapSpriteProp("crop_rows", 988, 874, 216, 142, 1016);
-        pinBanners.add(new PinBanner("CHURCH & FARM", 936, 670));
+        pinBanners.add(new PinBanner("CHURCH & FARM", 970, 700));
         landmarks.add(new Landmark(
-            "VILLAGE CHURCH", "CHURCH DISTRICT",
-            "A small village church beside traditional homes and walking paths.", 862, 880, 100
-        ));
+                "VILLAGE CHURCH", "CHURCH DISTRICT",
+                "A small village church beside traditional homes and walking paths.", 862, 880, 100));
         landmarks.add(new Landmark(
-            "COMMUNITY FARM", "AGRICULTURAL GROVE",
-            "Vegetable plots and a wooden farmhouse sit along the southern town road.", 1178, 972, 100
-        ));
+                "COMMUNITY FARM", "AGRICULTURAL GROVE",
+                "Vegetable plots and a wooden farmhouse sit along the southern town road.", 1178, 972, 100));
 
         addMapSpriteProp("provincial_pavilion", 1310, 724, 485, 209, 933);
         addSolidBox(1374, 810, 22, 88);
         addSolidBox(1720, 810, 22, 88);
         addMapSpriteProp("bench", 1390, 945, 66, 34, 976);
         addMapSpriteProp("street_lamp", 1764, 812, 22, 72, 884);
-        pinBanners.add(new PinBanner("PROVINCIAL LEVEL", 1523, 706));
+        pinBanners.add(new PinBanner("PROVINCIAL LEVEL", 1575, 700));
+        addWavingFlagProp(1438, 730, 70);
+        addWavingFlagProp(1748, 730, 70);
         landmarks.add(new Landmark(
-            "PROVINCIAL SPORTS PAVILION", "PROVINCIAL LEVEL",
-            "The open-air provincial pickleball pavilion and its nearby community grounds.", 1620, 980, 115
-        ));
-
+                "PROVINCIAL SPORTS PAVILION", "PROVINCIAL LEVEL",
+                "The open-air provincial pickleball pavilion and its nearby community grounds.", 1620, 980, 115));
 
         addTreeProp(1120, 555, "tree_large", 74, 108);
         addTreeProp(560, 918, "tree_large", 77, 112);
@@ -434,26 +423,29 @@ public class PickleSmashCityMap extends JPanel implements Runnable, KeyListener,
             if (entry.blocking) {
                 double radians = Math.toRadians(entry.rotationDegrees);
                 double colliderWidth = Math.abs(entry.width * Math.cos(radians))
-                    + Math.abs(entry.height * Math.sin(radians));
+                        + Math.abs(entry.height * Math.sin(radians));
                 double colliderHeight = Math.abs(entry.width * Math.sin(radians))
-                    + Math.abs(entry.height * Math.cos(radians));
+                        + Math.abs(entry.height * Math.cos(radians));
                 double centerX = entry.x + entry.width / 2.0;
                 double centerY = entry.y + entry.height / 2.0;
                 addSolidBox(centerX - colliderWidth / 2.0, centerY - colliderHeight / 2.0,
-                    colliderWidth, colliderHeight);
+                        colliderWidth, colliderHeight);
             }
             final MapLayoutStore.Entry prop = entry;
             depthSortedProps.add(new WorldProp(
-                prop.sortY,
-                (g, time) -> {
-                    BufferedImage sprite = mapAssets.get(prop.assetKey);
-                    Graphics2D rotatedGraphics = (Graphics2D) g.create();
-                    rotatedGraphics.rotate(Math.toRadians(prop.rotationDegrees),
-                        prop.x + prop.width / 2.0, prop.y + prop.height / 2.0);
-                    rotatedGraphics.drawImage(sprite, prop.x, prop.y, prop.width, prop.height, null);
-                    rotatedGraphics.dispose();
-                }
-            ));
+                    prop.sortY,
+                    (g, time) -> {
+                        BufferedImage sprite = mapAssets.get(prop.assetKey);
+                        Graphics2D rotatedGraphics = (Graphics2D) g.create();
+                        rotatedGraphics.rotate(Math.toRadians(prop.rotationDegrees),
+                                prop.x + prop.width / 2.0, prop.y + prop.height / 2.0);
+                        rotatedGraphics.drawImage(sprite, prop.x, prop.y, prop.width, prop.height, null);
+                        if ("fountain".equals(prop.assetKey)) {
+                            drawFountainEffect(rotatedGraphics, time,
+                                    prop.x, prop.y, prop.width, prop.height);
+                        }
+                        rotatedGraphics.dispose();
+                    }));
         }
         java.io.File layoutFile = MapLayoutStore.getLayoutFile();
         mapLayoutModified = layoutFile.isFile() ? layoutFile.lastModified() : Long.MIN_VALUE;
@@ -479,10 +471,6 @@ public class PickleSmashCityMap extends JPanel implements Runnable, KeyListener,
         }
     }
 
-
-
-
-
     private void addSolidBox(double x, double y, double w, double h) {
         solidColliders.add(new Rectangle2D.Double(x, y, w, h));
     }
@@ -490,8 +478,113 @@ public class PickleSmashCityMap extends JPanel implements Runnable, KeyListener,
     private void addMapSpriteProp(String assetKey, int x, int y, int width, int height, double sortY) {
         BufferedImage sprite = mapAssets.get(assetKey);
         depthSortedProps.add(new WorldProp(
-            sortY, (g, t) -> g.drawImage(sprite, x, y, width, height, null)
-        ));
+                sortY, (g, t) -> g.drawImage(sprite, x, y, width, height, null)));
+    }
+
+    private void addFountainProp(int x, int y, int width, int height, double sortY) {
+        BufferedImage sprite = mapAssets.get("fountain");
+        depthSortedProps.add(new WorldProp(
+                sortY, (g, time) -> {
+                    g.drawImage(sprite, x, y, width, height, null);
+                    drawFountainEffect(g, time, x, y, width, height);
+                }));
+    }
+
+    private void drawFountainEffect(Graphics2D g, double time,
+                                    int x, int y, int width, int height) {
+        Graphics2D water = (Graphics2D) g.create();
+        water.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        double centerX = x + width * 0.50;
+        double topY = y + height * 0.39;
+        double basinTopY = y + height * 0.55;
+        double basinBottomY = y + height * 0.63;
+        double sideSpread = width * 0.13;
+
+        water.setStroke(new BasicStroke(Math.max(2f, (float) (width * 0.018f)),
+                BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+        water.setColor(new Color(125, 225, 255, 230));
+        water.drawLine((int) centerX, (int) topY, (int) centerX, (int) basinTopY);
+
+        double phase = (time * 1.7) % 1.0;
+        for (int i = 0; i < 9; i++) {
+            double offsetPhase = (phase + i * 0.117) % 1.0;
+            double side = (i % 2 == 0 ? -1.0 : 1.0) * sideSpread * (0.45 + (i % 4) * 0.17);
+            double startX = centerX + side * 0.18;
+            double startY = topY + 4;
+            double endX = centerX + side;
+            double endY = basinTopY - height * 0.04;
+            double t = offsetPhase;
+            double dropletX = startX + (endX - startX) * t;
+            double dropletY = startY + (endY - startY) * t;
+            double arc = Math.sin(t * Math.PI) * height * 0.025;
+            dropletY -= arc;
+
+            water.setColor(new Color(166, 236, 255, 210));
+            water.fillOval((int) (dropletX - 2.5), (int) (dropletY - 2.5), 5, 5);
+        }
+
+        for (int i = 0; i < 3; i++) {
+            double ripple = (phase + i / 3.0) % 1.0;
+            int rippleWidth = (int) (width * (0.12 + ripple * 0.16));
+            int rippleHeight = (int) (height * (0.018 + ripple * 0.018));
+            water.setColor(new Color(210, 248, 255, (int) (170 * (1.0 - ripple))));
+            water.setStroke(new BasicStroke(2f));
+            water.drawOval((int) centerX - rippleWidth / 2,
+                    (int) basinBottomY - rippleHeight / 2,
+                    rippleWidth, rippleHeight);
+        }
+
+        water.dispose();
+    }
+
+    private void addWavingFlagProp(int x, int y, int width) {
+        int height = Math.max(20, width / 2);
+        depthSortedProps.add(new WorldProp(y + height + 6, (g, time) -> {
+            Graphics2D flag = (Graphics2D) g.create();
+            flag.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+            int poleWidth = Math.max(2, width / 35);
+            int clothX = x + poleWidth;
+            double wave = Math.sin(time * 4.0) * width * 0.035;
+            flag.setColor(new Color(226, 232, 240));
+            flag.setStroke(new BasicStroke(poleWidth, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+            flag.drawLine(x, y - 3, x, y + height + 6);
+
+            Path2D upperHalf = new Path2D.Double();
+            upperHalf.moveTo(clothX, y);
+            upperHalf.curveTo(clothX + width * 0.35, y + wave,
+                    clothX + width * 0.68, y - wave, clothX + width, y + wave * 0.3);
+            upperHalf.lineTo(clothX + width, y + height / 2.0 + wave * 0.3);
+            upperHalf.curveTo(clothX + width * 0.68, y + height / 2.0 - wave,
+                    clothX + width * 0.35, y + height / 2.0 + wave, clothX, y + height / 2.0);
+            upperHalf.closePath();
+            flag.setColor(new Color(0, 56, 168));
+            flag.fill(upperHalf);
+
+            Path2D lowerHalf = new Path2D.Double();
+            lowerHalf.moveTo(clothX, y + height / 2.0);
+            lowerHalf.curveTo(clothX + width * 0.35, y + height / 2.0 + wave,
+                    clothX + width * 0.68, y + height / 2.0 - wave,
+                    clothX + width, y + height / 2.0 + wave * 0.3);
+            lowerHalf.lineTo(clothX + width, y + height + wave * 0.3);
+            lowerHalf.curveTo(clothX + width * 0.68, y + height - wave,
+                    clothX + width * 0.35, y + height + wave, clothX, y + height);
+            lowerHalf.closePath();
+            flag.setColor(new Color(206, 17, 38));
+            flag.fill(lowerHalf);
+
+            Polygon triangle = new Polygon(
+                    new int[] { clothX, clothX + width / 3, clothX + width / 3 },
+                    new int[] { y + height / 2, y + (int) (height * 0.16), y + (int) (height * 0.84) },
+                    3);
+            flag.setColor(Color.WHITE);
+            flag.fillPolygon(triangle);
+            flag.setColor(new Color(252, 209, 22));
+            flag.fillOval(clothX + width / 9, y + height / 2 - height / 10,
+                    Math.max(3, width / 7), Math.max(3, height / 5));
+            flag.dispose();
+        }));
     }
 
     private void addBuildingCollision(double x, double y, double width, double height, double doorGap) {
@@ -507,8 +600,6 @@ public class PickleSmashCityMap extends JPanel implements Runnable, KeyListener,
         addMapSpriteProp(assetKey, centerX - width / 2, baseY - height, width, height, baseY);
     }
 
-
-
     // ------------------------------------------------------------------------
     // 6. STATIC TILE LAYER BAKER
     // ------------------------------------------------------------------------
@@ -519,10 +610,6 @@ public class PickleSmashCityMap extends JPanel implements Runnable, KeyListener,
         tileMap.draw(g, mapAssets);
         g.dispose();
     }
-
-
-
-
 
     // ------------------------------------------------------------------------
     // ------------------------------------------------------------------------
@@ -542,8 +629,7 @@ public class PickleSmashCityMap extends JPanel implements Runnable, KeyListener,
         }
         int spriteHeight = 88;
         int spriteWidth = Math.max(1, (int) Math.round(
-            spriteHeight * (double) sprite.getWidth() / sprite.getHeight()
-        ));
+                spriteHeight * (double) sprite.getWidth() / sprite.getHeight()));
 
         g.setColor(new Color(15, 23, 42, 110));
         g.fillOval(px - spriteWidth / 3, py - 7, spriteWidth * 2 / 3, 12);
@@ -574,7 +660,8 @@ public class PickleSmashCityMap extends JPanel implements Runnable, KeyListener,
         g.fillRoundRect(bx + 2, by + 3, boxW, boxH, 10, 10);
 
         // Blue gradient badge
-        GradientPaint badgeGrad = new GradientPaint(bx, by, new Color(37, 99, 235), bx, by + boxH, new Color(29, 78, 216));
+        GradientPaint badgeGrad = new GradientPaint(bx, by, new Color(37, 99, 235), bx, by + boxH,
+                new Color(29, 78, 216));
         g.setPaint(badgeGrad);
         g.fillRoundRect(bx, by, boxW, boxH, 10, 10);
 
@@ -590,7 +677,7 @@ public class PickleSmashCityMap extends JPanel implements Runnable, KeyListener,
         int py = by + 12;
         g.setColor(new Color(250, 204, 21));
         g.fillOval(px - 6, py - 8, 12, 12);
-        Polygon pinTip = new Polygon(new int[]{px - 5, px + 5, px}, new int[]{py, py, py + 7}, 3);
+        Polygon pinTip = new Polygon(new int[] { px - 5, px + 5, px }, new int[] { py, py, py + 7 }, 3);
         g.fillPolygon(pinTip);
         g.setColor(new Color(15, 23, 42));
         g.setStroke(new BasicStroke(1.5f));
@@ -608,7 +695,8 @@ public class PickleSmashCityMap extends JPanel implements Runnable, KeyListener,
     // 9. GAME LOOP, MOVEMENT, COLLISION & CAMERA FOLLOW UPDATE
     // ------------------------------------------------------------------------
     public void start() {
-        if (running) return;
+        if (running)
+            return;
         running = true;
         gameThread = new Thread(this, "PickleSmashTownMapLoop");
         gameThread.start();
@@ -616,11 +704,24 @@ public class PickleSmashCityMap extends JPanel implements Runnable, KeyListener,
 
     public void stop() {
         running = false;
-        if (gameThread != null) gameThread.interrupt();
+        if (gameThread != null)
+            gameThread.interrupt();
     }
 
     public void setExitAction(Runnable exitAction) {
         this.exitAction = exitAction;
+    }
+
+    private void returnToHome() {
+        if (exitAction != null) {
+            exitAction.run();
+            return;
+        }
+
+        java.awt.Window window = SwingUtilities.getWindowAncestor(this);
+        if (window != null) {
+            window.dispose();
+        }
     }
 
     @Override
@@ -647,16 +748,21 @@ public class PickleSmashCityMap extends JPanel implements Runnable, KeyListener,
 
         if (toastTimer > 0) {
             toastTimer -= dt;
-            if (toastTimer <= 0) toastMessage = null;
+            if (toastTimer <= 0)
+                toastMessage = null;
         }
 
         // 1. Character Movement (paused while reading landmark dialogue)
         double mx = 0, my = 0;
         if (activeDialogue == null) {
-            if (keyUp) my -= 1;
-            if (keyDown) my += 1;
-            if (keyLeft) mx -= 1;
-            if (keyRight) mx += 1;
+            if (keyUp)
+                my -= 1;
+            if (keyDown)
+                my += 1;
+            if (keyLeft)
+                mx -= 1;
+            if (keyRight)
+                mx += 1;
         }
 
         isMoving = (mx != 0 || my != 0);
@@ -727,8 +833,16 @@ public class PickleSmashCityMap extends JPanel implements Runnable, KeyListener,
             } else {
                 // Gentle corner sliding
                 for (double nudge = 4; nudge <= 14; nudge += 4) {
-                    if (!checkCollision(playerX + dx, playerY - nudge)) { playerY -= 2; playerX += dx * 0.7; break; }
-                    if (!checkCollision(playerX + dx, playerY + nudge)) { playerY += 2; playerX += dx * 0.7; break; }
+                    if (!checkCollision(playerX + dx, playerY - nudge)) {
+                        playerY -= 2;
+                        playerX += dx * 0.7;
+                        break;
+                    }
+                    if (!checkCollision(playerX + dx, playerY + nudge)) {
+                        playerY += 2;
+                        playerX += dx * 0.7;
+                        break;
+                    }
                 }
             }
         }
@@ -737,8 +851,16 @@ public class PickleSmashCityMap extends JPanel implements Runnable, KeyListener,
                 playerY += dy;
             } else {
                 for (double nudge = 4; nudge <= 14; nudge += 4) {
-                    if (!checkCollision(playerX - nudge, playerY + dy)) { playerX -= 2; playerY += dy * 0.7; break; }
-                    if (!checkCollision(playerX + nudge, playerY + dy)) { playerX += 2; playerY += dy * 0.7; break; }
+                    if (!checkCollision(playerX - nudge, playerY + dy)) {
+                        playerX -= 2;
+                        playerY += dy * 0.7;
+                        break;
+                    }
+                    if (!checkCollision(playerX + nudge, playerY + dy)) {
+                        playerX += 2;
+                        playerY += dy * 0.7;
+                        break;
+                    }
                 }
             }
         }
@@ -746,28 +868,38 @@ public class PickleSmashCityMap extends JPanel implements Runnable, KeyListener,
 
     private boolean checkCollision(double px, double py) {
         Rectangle2D.Double footBox = new Rectangle2D.Double(px - 12, py - 10, 24, 14);
-        if (tileMap.blocks(footBox)) return true;
+        if (tileMap.blocks(footBox))
+            return true;
         for (Rectangle2D.Double box : solidColliders) {
-            if (footBox.intersects(box)) return true;
+            if (footBox.intersects(box))
+                return true;
         }
         return false;
     }
 
     private String getCurrentDistrictName() {
         if (playerY < 320) {
-            if (playerX < 640) return "TRAINING CAMPUS";
-            if (playerX < 1280) return "BARANGAY LEVEL";
+            if (playerX < 640)
+                return "TRAINING CAMPUS";
+            if (playerX < 1280)
+                return "BARANGAY LEVEL";
             return "RESIDENTIAL STRIP";
         }
         if (playerY < 640) {
-            if (playerX < 640) return "MARKET & SARI-SARI";
-            if (playerX < 1280) return "FOUNTAIN PLAZA";
-            if (playerX < 1920) return "CITY LEVEL";
+            if (playerX < 640)
+                return "MARKET & SARI-SARI";
+            if (playerX < 1280)
+                return "FOUNTAIN PLAZA";
+            if (playerX < 1920)
+                return "CITY LEVEL";
             return "RIVER FEATURE";
         }
-        if (playerX < 640) return "RESIDENTIAL HOMES";
-        if (playerX < 1280) return "CHURCH & FARM";
-        if (playerX < 1920) return "PROVINCIAL LEVEL";
+        if (playerX < 640)
+            return "RESIDENTIAL HOMES";
+        if (playerX < 1280)
+            return "CHURCH & FARM";
+        if (playerX < 1920)
+            return "PROVINCIAL LEVEL";
         return "RIVER FEATURE";
     }
 
@@ -801,15 +933,16 @@ public class PickleSmashCityMap extends JPanel implements Runnable, KeyListener,
         // Draw the tile layers baked at native world resolution.
         g.drawImage(worldBaseCache, 0, 0, null);
 
-        // Depth-sort map props and the character by Y coordinate
+        // Depth-sort the map props, then keep the player visible above them.
         List<WorldProp> frameList = new ArrayList<>(depthSortedProps);
-        if (includePlayer) {
-            frameList.add(new WorldProp(playerY, (pg, t) -> drawWalkableCharacter(pg, playerX, playerY)));
-        }
         frameList.sort(Comparator.comparingDouble(p -> p.sortY));
 
         for (WorldProp prop : frameList) {
             prop.renderer.draw(g, animTime);
+        }
+
+        if (includePlayer) {
+            drawWalkableCharacter(g, playerX, playerY);
         }
 
         if (fullMapOverview) {
@@ -831,15 +964,15 @@ public class PickleSmashCityMap extends JPanel implements Runnable, KeyListener,
 
     private void drawDistrictBounds(Graphics2D g) {
         String[] labels = {
-            "TRAINING", "BARANGAY", "RESIDENTIAL", "MARKET", "PLAZA",
-            "CITY", "HOMES", "CHURCH / FARM", "PROVINCIAL", "RIVER"
+                "TRAINING", "BARANGAY", "RESIDENTIAL", "MARKET", "PLAZA",
+                "CITY", "HOMES", "CHURCH / FARM", "PROVINCIAL", "RIVER"
         };
         Rectangle[] bounds = {
-            new Rectangle(0, 0, 640, 320), new Rectangle(640, 0, 640, 320),
-            new Rectangle(1280, 0, 640, 320), new Rectangle(0, 320, 640, 320),
-            new Rectangle(640, 320, 640, 320), new Rectangle(1280, 320, 640, 320),
-            new Rectangle(0, 640, 640, 512), new Rectangle(640, 640, 640, 512),
-            new Rectangle(1280, 640, 640, 512), new Rectangle(1920, 640, 128, 512)
+                new Rectangle(0, 0, 640, 320), new Rectangle(640, 0, 640, 320),
+                new Rectangle(1280, 0, 640, 320), new Rectangle(0, 320, 640, 320),
+                new Rectangle(640, 320, 640, 320), new Rectangle(1280, 320, 640, 320),
+                new Rectangle(0, 640, 640, 512), new Rectangle(640, 640, 640, 512),
+                new Rectangle(1280, 640, 640, 512), new Rectangle(1920, 640, 128, 512)
         };
         g.setColor(new Color(255, 210, 45, 220));
         g.setStroke(new BasicStroke(2f));
@@ -850,26 +983,21 @@ public class PickleSmashCityMap extends JPanel implements Runnable, KeyListener,
     }
 
     private void drawScreenHUD(Graphics2D g, int vw, int vh) {
+        g.setColor(backButtonHovered
+                ? new Color(37, 99, 235, 245)
+                : new Color(15, 23, 42, 230));
+        g.fillRoundRect(backButtonBounds.x, backButtonBounds.y,
+                backButtonBounds.width, backButtonBounds.height, 12, 12);
+        g.setColor(new Color(56, 189, 248));
+        g.setStroke(new BasicStroke(2f));
+        g.drawRoundRect(backButtonBounds.x, backButtonBounds.y,
+                backButtonBounds.width, backButtonBounds.height, 12, 12);
+
+        g.setColor(Color.WHITE);
+        g.setFont(new Font("SansSerif", Font.BOLD, 16));
+        g.drawString("\u25C0  BACK", backButtonBounds.x + 16, backButtonBounds.y + 30);
+
         if (!fullMapOverview) {
-            // Top-Left District & Zoom Status Card
-            g.setColor(new Color(15, 23, 42, 220));
-            g.fillRoundRect(16, 16, 330, 86, 14, 14);
-            g.setColor(new Color(56, 189, 248));
-            g.setStroke(new BasicStroke(2f));
-            g.drawRoundRect(16, 16, 330, 86, 14, 14);
-
-            g.setColor(new Color(250, 204, 21));
-            g.setFont(new Font("SansSerif", Font.BOLD, 13));
-            g.drawString("PICKLE SMASH — TOWN MAP", 30, 38);
-
-            g.setColor(Color.WHITE);
-            g.setFont(new Font("SansSerif", Font.BOLD, 16));
-            g.drawString(getCurrentDistrictName(), 30, 62);
-
-            g.setColor(new Color(148, 163, 184));
-            g.setFont(new Font("Monospaced", Font.BOLD, 12));
-            g.drawString(String.format("POS: (%d, %d)  |  ZOOM: %.2fx", (int) playerX, (int) playerY, camZoom), 30, 85);
-
             // Top-Right Live Mini-Map Radar
             int radarW = 224;
             int radarH = 126;
@@ -903,6 +1031,30 @@ public class PickleSmashCityMap extends JPanel implements Runnable, KeyListener,
 
             g.setFont(new Font("SansSerif", Font.BOLD, 10));
             drawCenteredString(g, "WORLD RADAR [M: FULL MAP]", rx + radarW / 2, ry + radarH + 16);
+
+            // District & Zoom Status Card, positioned immediately left of the radar
+            int statusW = 330;
+            int statusH = 86;
+            int statusX = Math.max(16, rx - statusW - 10);
+            int statusY = ry;
+            g.setColor(new Color(15, 23, 42, 220));
+            g.fillRoundRect(statusX, statusY, statusW, statusH, 14, 14);
+            g.setColor(new Color(56, 189, 248));
+            g.setStroke(new BasicStroke(2f));
+            g.drawRoundRect(statusX, statusY, statusW, statusH, 14, 14);
+
+            g.setColor(new Color(250, 204, 21));
+            g.setFont(new Font("SansSerif", Font.BOLD, 13));
+            g.drawString("PICKLE SMASH — TOWN MAP", statusX + 14, statusY + 22);
+
+            g.setColor(Color.WHITE);
+            g.setFont(new Font("SansSerif", Font.BOLD, 16));
+            g.drawString(getCurrentDistrictName(), statusX + 14, statusY + 46);
+
+            g.setColor(new Color(148, 163, 184));
+            g.setFont(new Font("Monospaced", Font.BOLD, 12));
+            g.drawString(String.format("POS: (%d, %d)  |  ZOOM: %.2fx",
+                    (int) playerX, (int) playerY, camZoom), statusX + 14, statusY + 69);
         }
 
         if (!fullMapOverview) {
@@ -1032,11 +1184,16 @@ public class PickleSmashCityMap extends JPanel implements Runnable, KeyListener,
     @Override
     public void keyPressed(KeyEvent e) {
         int code = e.getKeyCode();
-        if (code == KeyEvent.VK_W || code == KeyEvent.VK_UP) keyUp = true;
-        if (code == KeyEvent.VK_S || code == KeyEvent.VK_DOWN) keyDown = true;
-        if (code == KeyEvent.VK_A || code == KeyEvent.VK_LEFT) keyLeft = true;
-        if (code == KeyEvent.VK_D || code == KeyEvent.VK_RIGHT) keyRight = true;
-        if (code == KeyEvent.VK_SHIFT) keyShift = true;
+        if (code == KeyEvent.VK_W || code == KeyEvent.VK_UP)
+            keyUp = true;
+        if (code == KeyEvent.VK_S || code == KeyEvent.VK_DOWN)
+            keyDown = true;
+        if (code == KeyEvent.VK_A || code == KeyEvent.VK_LEFT)
+            keyLeft = true;
+        if (code == KeyEvent.VK_D || code == KeyEvent.VK_RIGHT)
+            keyRight = true;
+        if (code == KeyEvent.VK_SHIFT)
+            keyShift = true;
 
         if (code == KeyEvent.VK_EQUALS || code == KeyEvent.VK_ADD) {
             fullMapOverview = false;
@@ -1050,7 +1207,8 @@ public class PickleSmashCityMap extends JPanel implements Runnable, KeyListener,
             fullMapOverview = !fullMapOverview;
             if (fullMapOverview) {
                 savedZoom = targetZoom;
-                targetZoom = Math.max(0.4, Math.min((double) getWidth() / WORLD_WIDTH, (double) getHeight() / WORLD_HEIGHT));
+                targetZoom = Math.max(0.4,
+                        Math.min((double) getWidth() / WORLD_WIDTH, (double) getHeight() / WORLD_HEIGHT));
             } else {
                 targetZoom = Math.max(1.4, savedZoom);
             }
@@ -1065,11 +1223,11 @@ public class PickleSmashCityMap extends JPanel implements Runnable, KeyListener,
         } else if (code == KeyEvent.VK_ESCAPE) {
             if (activeDialogue != null) {
                 activeDialogue = null;
-            } else if (exitAction != null) {
-                exitAction.run();
+            } else {
+                returnToHome();
             }
         } else if (code == KeyEvent.VK_1) {
-            warpPlayer(390, 268, "TRAINING CAMPUS");
+            warpPlayer(620, 300, "TRAINING CAMPUS");
         } else if (code == KeyEvent.VK_2) {
             warpPlayer(1070, 270, "BARANGAY LEVEL");
         } else if (code == KeyEvent.VK_3) {
@@ -1093,11 +1251,16 @@ public class PickleSmashCityMap extends JPanel implements Runnable, KeyListener,
     @Override
     public void keyReleased(KeyEvent e) {
         int code = e.getKeyCode();
-        if (code == KeyEvent.VK_W || code == KeyEvent.VK_UP) keyUp = false;
-        if (code == KeyEvent.VK_S || code == KeyEvent.VK_DOWN) keyDown = false;
-        if (code == KeyEvent.VK_A || code == KeyEvent.VK_LEFT) keyLeft = false;
-        if (code == KeyEvent.VK_D || code == KeyEvent.VK_RIGHT) keyRight = false;
-        if (code == KeyEvent.VK_SHIFT) keyShift = false;
+        if (code == KeyEvent.VK_W || code == KeyEvent.VK_UP)
+            keyUp = false;
+        if (code == KeyEvent.VK_S || code == KeyEvent.VK_DOWN)
+            keyDown = false;
+        if (code == KeyEvent.VK_A || code == KeyEvent.VK_LEFT)
+            keyLeft = false;
+        if (code == KeyEvent.VK_D || code == KeyEvent.VK_RIGHT)
+            keyRight = false;
+        if (code == KeyEvent.VK_SHIFT)
+            keyShift = false;
     }
 
     @Override
@@ -1115,6 +1278,11 @@ public class PickleSmashCityMap extends JPanel implements Runnable, KeyListener,
     @Override
     public void mousePressed(MouseEvent e) {
         requestFocusInWindow();
+        if (SwingUtilities.isLeftMouseButton(e)
+                && backButtonBounds.contains(e.getPoint())) {
+            returnToHome();
+            return;
+        }
         if (SwingUtilities.isRightMouseButton(e) || fullMapOverview) {
             isDraggingCam = true;
             lastMouseX = e.getX();
@@ -1139,10 +1307,28 @@ public class PickleSmashCityMap extends JPanel implements Runnable, KeyListener,
         }
     }
 
-    @Override public void mouseMoved(MouseEvent e) {}
-    @Override public void mouseClicked(MouseEvent e) {}
-    @Override public void mouseEntered(MouseEvent e) {}
-    @Override public void mouseExited(MouseEvent e) {}
+    @Override
+    public void mouseMoved(MouseEvent e) {
+        boolean hovered = backButtonBounds.contains(e.getPoint());
+        if (hovered != backButtonHovered) {
+            backButtonHovered = hovered;
+            setCursor(hovered ? Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)
+                    : Cursor.getDefaultCursor());
+            repaint();
+        }
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+    }
 
     // ------------------------------------------------------------------------
     // 13. MAIN ENTRY POINT

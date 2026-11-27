@@ -1457,7 +1457,7 @@ public class PickleBallHomeScreen extends JFrame {
                     Palette.BALL_YELLOW);
             PixelFont.drawCentered(
                     g,
-                    "PICKLESMASH",
+                    "PICKLE SMASH",
                     VIRTUAL_WIDTH / 2,
                     84,
                     2,

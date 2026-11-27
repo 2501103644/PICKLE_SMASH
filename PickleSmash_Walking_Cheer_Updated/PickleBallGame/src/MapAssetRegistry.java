@@ -39,6 +39,7 @@ public final class MapAssetRegistry {
         paths.put("waterfall", "Sprites/Atlas_03/A03_Sprite_121.png");
         paths.put("crop_rows", "Sprites/Atlas_03/A03_Sprite_033.png");
         paths.put("street_sign", "Sprites/Atlas_01/A01_Sprite_090.png");
+        paths.put("fence", "Sprites/Atlas_01/A01_Sprite_094.png");
         paths.put("flower_patch", "Sprites/Atlas_03/A03_Sprite_079.png");
         paths.put("flower_bush", "Sprites/Atlas_03/A03_Sprite_073.png");
         paths.put("flower_planter", "Sprites/Atlas_01/A01_Sprite_147.png");
