@@ -40,6 +40,9 @@ public final class MapAssetRegistry {
         paths.put("crop_rows", "Sprites/Atlas_03/A03_Sprite_033.png");
         paths.put("street_sign", "Sprites/Atlas_01/A01_Sprite_090.png");
         paths.put("fence", "Sprites/Atlas_01/A01_Sprite_094.png");
+        paths.put("fence_short", "Sprites/Atlas_01/A01_Sprite_094.png");
+        paths.put("fence_shorter", "Sprites/Atlas_01/A01_Sprite_094.png");
+        paths.put("fence_birds_eye", "Sprites/Atlas_03/A03_Sprite_117.png");
         paths.put("flower_patch", "Sprites/Atlas_03/A03_Sprite_079.png");
         paths.put("flower_bush", "Sprites/Atlas_03/A03_Sprite_073.png");
         paths.put("flower_planter", "Sprites/Atlas_01/A01_Sprite_147.png");
@@ -72,6 +75,12 @@ public final class MapAssetRegistry {
                     image = createMissingAssetPlaceholder(entry.getKey());
                 }
                 loadedByPath.put(resource, image);
+            }
+            if ("fence_short".equals(entry.getKey()) || "fence_shorter".equals(entry.getKey())) {
+                int targetWidth = "fence_short".equals(entry.getKey()) ? 50 : 32;
+                int width = Math.min(targetWidth, image.getWidth());
+                int x = Math.min(30, image.getWidth() - width);
+                image = image.getSubimage(x, 0, width, image.getHeight());
             }
             images.put(entry.getKey(), image);
         }

@@ -160,10 +160,43 @@ public class PickleSmashCityMap extends JPanel
         mapAssets = new MapAssetRegistry();
         loadPlayerSprites();
         buildWorldData();
+        respawnAtTrainingBuilding();
         bakeStaticHDWorldLayer();
 
         camX = playerX;
         camY = playerY;
+    }
+
+    private void respawnAtTrainingBuilding() {
+        double x = 180;
+        double y = 58;
+        double width = 369;
+        double height = 171;
+        int rotationDegrees = 0;
+
+        List<MapLayoutStore.Entry> layout = MapLayoutStore.load();
+        if (layout != null) {
+            for (MapLayoutStore.Entry entry : layout) {
+                if ("training_building".equals(entry.assetKey) && entry.width > 0 && entry.height > 0) {
+                    x = entry.x;
+                    y = entry.y;
+                    width = entry.width;
+                    height = entry.height;
+                    rotationDegrees = entry.rotationDegrees;
+                    break;
+                }
+            }
+        }
+
+        double radians = Math.toRadians(rotationDegrees);
+        double rotatedHeight = Math.abs(width * Math.sin(radians))
+                + Math.abs(height * Math.cos(radians));
+        playerX = x + width / 2.0;
+        playerY = y + height / 2.0 + rotatedHeight / 2.0 + 32.0;
+        playerDir = 1;
+        walkAnimTimer = 0.0;
+        isMoving = false;
+        isJogging = false;
     }
 
     private void loadPlayerSprites() {
@@ -384,6 +417,7 @@ public class PickleSmashCityMap extends JPanel
         addMapSpriteProp("wooden_house", 1000, 716, 179, 155, 871);
         addBuildingCollision(1040, 788, 95, 62, 42);
         addMapSpriteProp("crop_rows", 988, 874, 216, 142, 1016);
+        addSolidBox(988, 874, 216, 142);
         pinBanners.add(new PinBanner("CHURCH & FARM", 970, 700));
         landmarks.add(new Landmark(
                 "VILLAGE CHURCH", "CHURCH DISTRICT",
@@ -420,7 +454,7 @@ public class PickleSmashCityMap extends JPanel
         depthSortedProps.clear();
         solidColliders.clear();
         for (MapLayoutStore.Entry entry : layout) {
-            if (entry.blocking) {
+            if (entry.blocking || MapLayoutStore.isBlockingAsset(entry.assetKey)) {
                 double radians = Math.toRadians(entry.rotationDegrees);
                 double colliderWidth = Math.abs(entry.width * Math.cos(radians))
                         + Math.abs(entry.height * Math.sin(radians));
@@ -491,7 +525,7 @@ public class PickleSmashCityMap extends JPanel
     }
 
     private void drawFountainEffect(Graphics2D g, double time,
-                                    int x, int y, int width, int height) {
+            int x, int y, int width, int height) {
         Graphics2D water = (Graphics2D) g.create();
         water.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 

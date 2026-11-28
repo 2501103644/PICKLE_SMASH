@@ -190,6 +190,8 @@ public class MapEditor extends JFrame {
         heightSpinner = addSpinner(properties, "Height", 100, 1, 5000);
         sortSpinner = addSpinner(properties, "Layer Y", 100, -5000, 5000);
         blockingCheck = new JCheckBox("Blocks player");
+        blockingCheck.setToolTipText("This asset type always blocks player movement.");
+        blockingCheck.setEnabled(false);
 
         assetSidebar = new JPanel(new BorderLayout());
         JPanel assetChooser = new JPanel(new BorderLayout(4, 4));
@@ -515,7 +517,7 @@ public class MapEditor extends JFrame {
         int width = ((Number) widthSpinner.getValue()).intValue();
         int height = ((Number) heightSpinner.getValue()).intValue();
         int sortY = ((Number) sortSpinner.getValue()).intValue();
-        boolean blocking = blockingCheck.isSelected();
+        boolean blocking = MapLayoutStore.isBlockingAsset(entry.assetKey) || blockingCheck.isSelected();
         if (entry.x == x && entry.y == y && entry.width == width && entry.height == height
                 && entry.sortY == sortY && entry.blocking == blocking) {
             return;
@@ -539,6 +541,7 @@ public class MapEditor extends JFrame {
             heightSpinner.setValue(entry.height);
             sortSpinner.setValue(entry.sortY);
             blockingCheck.setSelected(entry.blocking);
+            blockingCheck.setEnabled(!MapLayoutStore.isBlockingAsset(entry.assetKey));
         } finally {
             syncingProperties = false;
         }
@@ -546,6 +549,7 @@ public class MapEditor extends JFrame {
 
     private void clearPropertySelection() {
         blockingCheck.setSelected(false);
+        blockingCheck.setEnabled(false);
     }
 
     private int hitTest(int screenX, int screenY) {
@@ -585,7 +589,7 @@ public class MapEditor extends JFrame {
         int height = Math.min(180, Math.max(32, image.getHeight()));
         int x = Math.max(0, Math.min(WORLD_WIDTH - width, lastCanvasWorldPosition.x - width / 2));
         int y = Math.max(0, Math.min(WORLD_HEIGHT - height, lastCanvasWorldPosition.y - height / 2));
-        boolean blocking = "fence".equals(key);
+        boolean blocking = MapLayoutStore.isBlockingAsset(key);
         MapLayoutStore.Entry entry = new MapLayoutStore.Entry(key, x, y, width, height, y + height, blocking);
         pushUndoState();
         entries.add(entry);

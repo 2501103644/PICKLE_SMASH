@@ -104,6 +104,7 @@ public class PickleBallHomeScreen extends JFrame {
 
     enum GameState {
         INTRO,
+        LOADING,
         GENDER,
         HOME,
         PLAYING,
@@ -845,6 +846,7 @@ public class PickleBallHomeScreen extends JFrame {
     // =========================================================================
 
     static class GameCanvas extends JPanel implements ActionListener {
+        private static final double LOADING_DURATION_SECONDS = 3.0;
         private final BufferedImage pixelBuffer;
         private final Timer gameLoop;
         private final List<PixelEntity> worldEntities = new ArrayList<>();
@@ -869,6 +871,7 @@ public class PickleBallHomeScreen extends JFrame {
         private String matchBanner = "";
         private double matchBannerTimer = 0;
         private double pulseTimer = 0;
+        private double loadingElapsed;
         private long lastNanoTime;
 
         public GameCanvas() {
@@ -1001,8 +1004,12 @@ public class PickleBallHomeScreen extends JFrame {
                     int code = e.getKeyCode();
 
                     if (currentState == GameState.INTRO) {
-                        currentState = GameState.GENDER;
+                        beginLoading();
                         repaint();
+                        return;
+                    }
+
+                    if (currentState == GameState.LOADING) {
                         return;
                     }
 
@@ -1111,7 +1118,12 @@ public class PickleBallHomeScreen extends JFrame {
                     int vx = e.getX() / SCALE;
 
                     if (currentState == GameState.INTRO) {
-                        currentState = GameState.GENDER;
+                        beginLoading();
+                        repaint();
+                        return;
+                    }
+
+                    if (currentState == GameState.LOADING) {
                         repaint();
                         return;
                     }
@@ -1171,6 +1183,13 @@ public class PickleBallHomeScreen extends JFrame {
             lastNanoTime = now;
 
             pulseTimer += dt;
+            if (currentState == GameState.LOADING) {
+                loadingElapsed = Math.min(LOADING_DURATION_SECONDS, loadingElapsed + dt);
+                if (loadingElapsed >= LOADING_DURATION_SECONDS) {
+                    currentState = GameState.GENDER;
+                    hoveredGender = null;
+                }
+            }
             if (matchBannerTimer > 0) {
                 matchBannerTimer = Math.max(0, matchBannerTimer - dt);
             }
@@ -1239,6 +1258,7 @@ public class PickleBallHomeScreen extends JFrame {
             // 4. Active Screen UI
             switch (currentState) {
                 case INTRO -> drawIntroOverlay(g2);
+                case LOADING -> drawLoadingOverlay(g2);
                 case GENDER -> drawGenderOverlay(g2);
                 case HOME -> drawHomeMenu(g2);
                 case PLAYING -> {
@@ -1468,6 +1488,46 @@ public class PickleBallHomeScreen extends JFrame {
                     "GET READY TO PLAY",
                     VIRTUAL_WIDTH / 2,
                     110,
+                    1,
+                    1,
+                    Palette.TEXT_WHITE);
+        }
+
+        private void beginLoading() {
+            loadingElapsed = 0;
+            currentState = GameState.LOADING;
+        }
+
+        private void drawLoadingOverlay(Graphics2D g) {
+            drawModalFrame(g, "LOADING", "PLEASE WAIT...");
+
+            int barX = 76;
+            int barY = 103;
+            int barWidth = 168;
+            int barHeight = 12;
+            double progress = Math.min(1.0, loadingElapsed / LOADING_DURATION_SECONDS);
+            int filledWidth = (int) Math.round((barWidth - 4) * progress);
+
+            g.setColor(Palette.BTN_OUTLINE);
+            g.fillRect(barX - 2, barY - 2, barWidth + 4, barHeight + 4);
+            g.setColor(Palette.BTN_IDLE_BG);
+            g.fillRect(barX, barY, barWidth, barHeight);
+            g.setColor(Palette.GOLD_TRIM);
+            g.drawRect(barX, barY, barWidth - 1, barHeight - 1);
+            if (filledWidth > 0) {
+                g.setColor(Palette.BALL_YELLOW);
+                g.fillRect(barX + 2, barY + 2, filledWidth, barHeight - 4);
+
+                int runnerX = barX + 2
+                        + (int) ((pulseTimer * 72) % Math.max(1, filledWidth));
+                g.setColor(Palette.TEXT_WHITE);
+                g.fillRect(runnerX, barY + 2, Math.min(3, barX + barWidth - runnerX), barHeight - 4);
+            }
+            PixelFont.drawCentered(
+                    g,
+                    (int) Math.round(progress * 100) + "%",
+                    VIRTUAL_WIDTH / 2,
+                    barY + 20,
                     1,
                     1,
                     Palette.TEXT_WHITE);

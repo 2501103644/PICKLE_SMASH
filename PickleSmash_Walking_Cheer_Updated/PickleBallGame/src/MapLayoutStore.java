@@ -15,6 +15,34 @@ public final class MapLayoutStore {
     private MapLayoutStore() {
     }
 
+    public static boolean isBlockingAsset(String assetKey) {
+        if (assetKey == null) return false;
+        if (assetKey.startsWith("fence") || assetKey.startsWith("tree_")
+                || "palm_tree".equals(assetKey) || assetKey.startsWith("bush_")
+                || assetKey.startsWith("flower_") || "crop_rows".equals(assetKey)) {
+            return true;
+        }
+        switch (assetKey) {
+            case "training_building":
+            case "barangay_hall":
+            case "city_level_complex":
+            case "provincial_pavilion":
+            case "sari_sari_shop":
+            case "church":
+            case "house_red_roof":
+            case "house_blue_roof":
+            case "wooden_house":
+            case "office_tower":
+            case "fountain":
+            case "street_lamp":
+            case "street_sign":
+            case "bench":
+                return true;
+            default:
+                return false;
+        }
+    }
+
     public static final class Entry {
         public String assetKey;
         public int x;
@@ -37,7 +65,7 @@ public final class MapLayoutStore {
             this.width = width;
             this.height = height;
             this.sortY = sortY;
-            this.blocking = blocking;
+            this.blocking = blocking || isBlockingAsset(assetKey);
             this.rotationDegrees = ((rotationDegrees % 360) + 360) % 360;
         }
     }
